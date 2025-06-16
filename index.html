@@ -1,5 +1,4 @@
-<!DOCTYPE html>
-<html lang="en">
+<!DOCTYPE html><html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -13,24 +12,19 @@
         .result { margin-top: 20px; }
     </style>
 </head>
-<body>
-
-<div class="container">
+<body><div class="container">
     <h2>🔗 URL Shortener</h2>
     <input type="text" id="longUrl" placeholder="Enter your URL here" size="40">
     <br>
-    <button onclick="shortenUrl()">✨ Shorten URL</button>
-
-    <div class="result" id="result" style="display:none;">
-        <h3>✅ Shortened URL</h3>
-        <input type="text" id="shortUrl" readonly size="40">
-        <br>
-        <button onclick="copyShort()">📋 Copy Shortened</button>
-        <a id="openLink" href="#" target="_blank"><button>🌐 Open Link</button></a>
-    </div>
+    <button onclick="shortenUrl()">✨ Shorten URL</button><div class="result" id="result" style="display:none;">
+    <h3>✅ Shortened URL</h3>
+    <input type="text" id="shortUrl" readonly size="40">
+    <br>
+    <button onclick="copyShort()">📋 Copy Shortened</button>
+    <a id="openLink" href="#" target="_blank"><button>🌐 Open Link</button></a>
 </div>
 
-<script>
+</div><script>
     function shortenUrl() {
         const longUrl = document.getElementById('longUrl').value.trim();
         if (!longUrl.startsWith("http://") && !longUrl.startsWith("https://")) {
@@ -59,7 +53,5 @@
         navigator.clipboard.writeText(shortUrl.value);
         alert("✅ Copied to clipboard!");
     }
-</script>
-
-</body>
+</script></body>
 </html>
