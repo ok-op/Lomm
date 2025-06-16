@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="description" content="Simple and fast URL shortener tool powered by is.gd API. Shorten long URLs easily.">
   <title>URL Shortener</title>
   <link rel="icon" href="https://i.ibb.co/j9n6nZxD/Op-log.png" type="image/x-icon">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -24,6 +25,9 @@
       width: 90%;
       max-width: 500px;
       text-align: center;
+    }
+    .container + .container {
+      margin-top: 20px;
     }
     @media (max-width: 600px) {
       .container {
@@ -108,6 +112,18 @@
       <button onclick="copyShort()"><i class="fa-solid fa-copy"></i> Copy</button>
       <a id="openLink" href="#" target="_blank"><button><i class="fa-solid fa-up-right-from-square"></i> Open</button></a>
     </div>
+  </div>
+
+  <div class="container">
+  <h2><i class="fa-solid fa-circle-info"></i> How to Use</h2>
+  <p style="margin-top: 12px; line-height: 1.6; color: #444; font-size: 1rem; text-align: left;">
+    <i class="fa-solid fa-1"></i> Enter your long URL in the input box above.<br><br>
+    <i class="fa-solid fa-2"></i> Click the <b>"Shorten URL"</b> button.<br><br>
+    <i class="fa-solid fa-3"></i> Your shortened URL will be displayed below with <b>Copy</b> and <b>Open</b> buttons.<br><br>
+    <i class="fa-solid fa-4"></i> Click <b>Copy</b> to copy the URL or <b>Open</b> to visit it directly.<br><br>
+    <i class="fa-solid fa-circle-info"></i> Make sure your URL starts with <code>http://</code> or <code>https://</code>.<br><br>
+    <i class="fa-solid fa-circle-check"></i> Example: <code>https://example.com</code>
+  </p>
   </div>
 
   <div class="footer">
