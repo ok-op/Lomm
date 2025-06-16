@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🔗 URL Shortener</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; background-color: #f4f4f4; padding: 20px; }
+        .container { background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1); display: inline-block; margin-top: 50px; }
+        input, button { padding: 10px; margin: 5px; border-radius: 5px; border: 1px solid #ccc; }
+        button { background-color: #007bff; color: #fff; border: none; cursor: pointer; }
+        button:hover { background-color: #0056b3; }
+        .result { margin-top: 20px; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>🔗 URL Shortener</h2>
+    <input type="text" id="longUrl" placeholder="Enter your URL here" size="40">
+    <br>
+    <button onclick="shortenUrl()">✨ Shorten URL</button>
+
+    <div class="result" id="result" style="display:none;">
+        <h3>✅ Shortened URL</h3>
+        <input type="text" id="shortUrl" readonly size="40">
+        <br>
+        <button onclick="copyShort()">📋 Copy Shortened</button>
+        <a id="openLink" href="#" target="_blank"><button>🌐 Open Link</button></a>
+    </div>
+</div>
+
+<script>
+    function shortenUrl() {
+        const longUrl = document.getElementById('longUrl').value.trim();
+        if (!longUrl.startsWith("http://") && !longUrl.startsWith("https://")) {
+            alert("❗ Please enter a valid URL starting with http:// or https://");
+            return;
+        }
+
+        fetch(`https://is.gd/create.php?format=json&url=${encodeURIComponent(longUrl)}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.shorturl) {
+                    document.getElementById('shortUrl').value = data.shorturl;
+                    document.getElementById('openLink').href = data.shorturl;
+                    document.getElementById('result').style.display = 'block';
+                } else {
+                    alert("❌ Error shortening URL.");
+                }
+            })
+            .catch(err => alert("❌ Error: " + err));
+    }
+
+    function copyShort() {
+        const shortUrl = document.getElementById('shortUrl');
+        shortUrl.select();
+        shortUrl.setSelectionRange(0, 99999);
+        navigator.clipboard.writeText(shortUrl.value);
+        alert("✅ Copied to clipboard!");
+    }
+</script>
+
+</body>
+</html>
