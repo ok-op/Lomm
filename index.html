@@ -1,57 +1,137 @@
-<!DOCTYPE html><html lang="en">
+<!DOCTYPE html>
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🔗 URL Shortener</title>
-    <style>
-        body { font-family: Arial, sans-serif; text-align: center; background-color: #f4f4f4; padding: 20px; }
-        .container { background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1); display: inline-block; margin-top: 50px; }
-        input, button { padding: 10px; margin: 5px; border-radius: 5px; border: 1px solid #ccc; }
-        button { background-color: #007bff; color: #fff; border: none; cursor: pointer; }
-        button:hover { background-color: #0056b3; }
-        .result { margin-top: 20px; }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>URL Shortener</title>
+  <link rel="icon" href="https://i.ibb.co/j9n6nZxD/Op-log.png" type="image/x-icon">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #e0e0e0;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+    .container {
+      background: #fff;
+      padding: 30px 20px;
+      border-radius: 12px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+      margin: auto;
+      width: 90%;
+      max-width: 500px;
+      text-align: center;
+    }
+    h2 {
+      margin-bottom: 15px;
+      color: #333;
+      font-weight: bold;
+      font-size: 1.8rem;
+    }
+    input[type="text"] {
+      width: 90%;
+      padding: 12px;
+      margin: 10px 0;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
+    }
+    button {
+      padding: 12px 20px;
+      margin: 8px 5px;
+      border-radius: 8px;
+      background-color: #007bff;
+      color: #fff;
+      border: none;
+      cursor: pointer;
+      box-shadow: 0 4px #0056b3, 0 8px 15px rgba(0,0,0,0.2);
+      transition: transform 0.1s, box-shadow 0.3s;
+    }
+    button:hover {
+      background-color: #0056b3;
+      transform: translateY(-2px);
+      box-shadow: 0 6px #004080, 0 12px 20px rgba(0,0,0,0.3);
+    }
+    .result {
+      margin-top: 20px;
+    }
+    .footer {
+      margin-top: auto;
+      background-color: #007bff;
+      color: #fff;
+      padding: 10px 0;
+      text-align: center;
+      box-shadow: 0 -4px 10px rgba(0,0,0,0.2);
+    }
+    .footer button {
+      background-color: #fff;
+      color: #007bff;
+      padding: 8px 16px;
+      border-radius: 6px;
+      box-shadow: 0 4px rgba(0,0,0,0.2);
+      border: 1px solid #007bff;
+    }
+    .footer button:hover {
+      background-color: #007bff;
+      color: #fff;
+      border-color: #fff;
+    }
+  </style>
 </head>
-<body><div class="container">
-    <h2>🔗 URL Shortener</h2>
-    <input type="text" id="longUrl" placeholder="Enter your URL here" size="40">
-    <br>
-    <button onclick="shortenUrl()">✨ Shorten URL</button><div class="result" id="result" style="display:none;">
-    <h3>✅ Shortened URL</h3>
-    <input type="text" id="shortUrl" readonly size="40">
-    <br>
-    <button onclick="copyShort()">📋 Copy Shortened</button>
-    <a id="openLink" href="#" target="_blank"><button>🌐 Open Link</button></a>
-</div>
+<body>
 
-</div><script>
+  <div class="container">
+    <h2><i class="fa-solid fa-link"></i> URL Shortener</h2>
+    <input type="text" id="longUrl" placeholder="Enter your URL here">
+    <br>
+    <button onclick="shortenUrl()"><i class="fa-solid fa-wand-magic-sparkles"></i> Shorten URL</button>
+
+    <div class="result" id="result" style="display:none;">
+      <h3><i class="fa-solid fa-check-circle"></i> Shortened URL</h3>
+      <input type="text" id="shortUrl" readonly>
+      <br>
+      <button onclick="copyShort()"><i class="fa-solid fa-copy"></i> Copy</button>
+      <a id="openLink" href="#" target="_blank"><button><i class="fa-solid fa-up-right-from-square"></i> Open</button></a>
+    </div>
+  </div>
+
+  <div class="footer">
+    <button onclick="window.location.reload()"><i class="fa-solid fa-rotate-right"></i> Reset</button>
+  </div>
+
+  <script>
     function shortenUrl() {
-        const longUrl = document.getElementById('longUrl').value.trim();
-        if (!longUrl.startsWith("http://") && !longUrl.startsWith("https://")) {
-            alert("❗ Please enter a valid URL starting with http:// or https://");
-            return;
-        }
+      const longUrl = document.getElementById('longUrl').value.trim();
+      if (!longUrl.startsWith("http://") && !longUrl.startsWith("https://")) {
+        alert("Please enter a valid URL starting with http:// or https://");
+        return;
+      }
 
-        fetch(`https://is.gd/create.php?format=json&url=${encodeURIComponent(longUrl)}`)
-            .then(response => response.json())
-            .then(data => {
-                if (data.shorturl) {
-                    document.getElementById('shortUrl').value = data.shorturl;
-                    document.getElementById('openLink').href = data.shorturl;
-                    document.getElementById('result').style.display = 'block';
-                } else {
-                    alert("❌ Error shortening URL.");
-                }
-            })
-            .catch(err => alert("❌ Error: " + err));
+      fetch(`https://is.gd/create.php?format=json&url=${encodeURIComponent(longUrl)}`)
+        .then(response => response.json())
+        .then(data => {
+          if (data.shorturl) {
+            document.getElementById('shortUrl').value = data.shorturl;
+            document.getElementById('openLink').href = data.shorturl;
+            document.getElementById('result').style.display = 'block';
+          } else {
+            alert("Error shortening URL.");
+          }
+        })
+        .catch(err => alert("Error: " + err));
     }
 
     function copyShort() {
-        const shortUrl = document.getElementById('shortUrl');
-        shortUrl.select();
-        shortUrl.setSelectionRange(0, 99999);
-        navigator.clipboard.writeText(shortUrl.value);
-        alert("✅ Copied to clipboard!");
+      const shortUrl = document.getElementById('shortUrl');
+      shortUrl.select();
+      shortUrl.setSelectionRange(0, 99999);
+      navigator.clipboard.writeText(shortUrl.value);
+      alert("Copied to clipboard!");
     }
-</script></body>
+  </script>
+</body>
 </html>
