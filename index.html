@@ -173,16 +173,10 @@
   </div>
 
   <script>
-    function shortenUrl(event) {
-      const button = event.target;
-      button.disabled = true;
-      button.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Processing...';
-
+    function shortenUrl() {
       const longUrl = document.getElementById('longUrl').value.trim();
       if (!longUrl.startsWith("http://") && !longUrl.startsWith("https://")) {
         alert("Please enter a valid URL starting with http:// or https://");
-        button.disabled = false;
-        button.innerHTML = '<i class="fa-solid fa-wand-magic-sparkles"></i> Shorten URL';
         return;
       }
 
@@ -194,19 +188,16 @@
             document.getElementById('openLink').href = data.shorturl;
             document.getElementById('result').style.display = 'block';
           } else {
-            alert("Error shortening URL. Please try again.");
+            alert("Error shortening URL.");
           }
         })
-        .catch(err => alert("Error: " + err))
-        .finally(() => {
-          button.disabled = false;
-          button.innerHTML = '<i class="fa-solid fa-wand-magic-sparkles"></i> Shorten URL';
-        });
+        .catch(err => alert("Error: " + err));
     }
 
     function copyShort(event) {
       const shortUrl = document.getElementById('shortUrl');
       shortUrl.select();
+      shortUrl.setSelectionRange(0, 99999);
       navigator.clipboard.writeText(shortUrl.value);
 
       const copyBtn = event.target;
