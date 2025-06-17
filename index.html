@@ -26,46 +26,6 @@
       max-width: 500px;
       text-align: center;
     }
-    .url-container {
-      margin-bottom: 20px;  /* WOODcraft */
-    }
-    
-    .url-container + .url-container {
-      margin-top: 20px;  /* WOODcraft */
-    }
-
-    .url-step-number {
-      display: inline-block;
-      width: 28px;
-      height: 28px;
-      line-height: 28px;
-      text-align: center;
-      border-radius: 50%;
-      color: #fff;
-      margin-right: 8px;
-      font-weight: bold;
-    }
-    
-    .url-step-one { background-color: #ff6b6b; }      /* লাল */
-    .url-step-two { background-color: #ffa502; }      /* কমলা */
-    .url-step-three { background-color: #1e90ff; }    /* নীল */
-    .url-step-four { background-color: #2ed573; }     /* সবুজ */
-    .url-step-info { background-color: #5352ed; }     /* বেগুনি */
-    .url-step-check { background-color: #2ecc71; }    /* গাঢ় সবুজ */
-
-    .url-container + .url-container {
-     margin-top: 20px;
-    }
-    @media (max-width: 600px) {
-      .container {
-        width: 92%;
-        margin: 20px auto;
-        padding: 20px 15px;
-      }
-      input[type="text"] {
-        width: 100%;
-      }
-    }
     h2 {
       margin-bottom: 15px;
       color: #333;
@@ -122,6 +82,59 @@
       color: #fff;
       border-color: #fff;
     }
+
+    /* =============WOODcraft Mirror Zone============= */
+    /* ✅ How to Use Section CSS ✅ */
+    .how-to-use {
+      background-color: #f1f5f9;
+      border-radius: 12px;
+      padding: 20px 16px;
+      margin: 20px auto;
+      max-width: 500px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    .how-to-use h2 {
+      margin-bottom: 12px;
+      color: #333;
+      font-size: 1.6rem;
+    }
+    .how-to-use p {
+      line-height: 1.8;
+      color: #333;
+      font-size: 1rem;
+      text-align: left;
+    }
+    .url-step-number {
+      display: inline-block;
+      width: 26px;
+      height: 26px;
+      line-height: 26px;
+      text-align: center;
+      border-radius: 50%;
+      color: #fff;
+      margin-right: 8px;
+      font-weight: bold;
+      font-size: 0.9rem;
+    }
+    .url-step-one { background-color: #e74c3c; }     /* লাল */
+    .url-step-two { background-color: #e67e22; }     /* কমলা */
+    .url-step-three { background-color: #3498db; }   /* নীল */
+    .url-step-four { background-color: #2ecc71; }    /* সবুজ */
+    .url-step-info { background-color: #9b59b6; }    /* বেগুনি */
+    .url-step-check { background-color: #27ae60; }   /* গাঢ় সবুজ */
+
+    /* =============WOODcraft Mirror Zone============= */
+    /* ✅ Responsive (for small devices) */
+    @media (max-width: 600px) {
+      .container {
+        width: 92%;
+        margin: 20px auto;
+        padding: 20px 15px;
+      }
+      input[type="text"] {
+        width: 100%;
+      }
+    }
   </style>
 </head>
 <body>
@@ -141,16 +154,16 @@
     </div>
   </div>
 
-  <div class="url-container">
-  <h2><i class="fa-solid fa-circle-info"></i> How to Use</h2>
-  <p style="margin-top: 12px; line-height: 1.7; color: #444; font-size: 1rem; text-align: left;">
-    <span class="url-step-number url-step-one">1</span> Enter your long URL in the input box above.<br>
-    <span class="url-step-number url-step-two">2</span> Click the <b>"Shorten URL"</b> button.<br>
-    <span class="url-step-number url-step-three">3</span> Your shortened URL will be displayed below with <b>Copy</b> and <b>Open</b> buttons.<br>
-    <span class="url-step-number url-step-four">4</span> Click <b>Copy</b> to copy the URL or <b>Open</b> to visit it directly.<br>
-    <span class="url-step-number url-step-info"><i class="fa-solid fa-circle-info"></i></span> Make sure your URL starts with <code>http://</code> or <code>https://</code>.<br>
-    <span class="url-step-number url-step-check"><i class="fa-solid fa-circle-check"></i></span> Example: <code>https://example.com</code>
-  </p>
+  <div class="how-to-use">
+    <h2><i class="fa-solid fa-circle-info"></i> How to Use</h2>
+    <p>
+      <span class="url-step-number url-step-one">1</span> Enter your long URL in the input box above.<br>
+      <span class="url-step-number url-step-two">2</span> Click the <b>"Shorten URL"</b> button.<br>
+      <span class="url-step-number url-step-three">3</span> Your shortened URL will be displayed below with <b>Copy</b> and <b>Open</b> buttons.<br>
+      <span class="url-step-number url-step-four">4</span> Click <b>Copy</b> to copy the URL or <b>Open</b> to visit it directly.<br>
+      <span class="url-step-number url-step-info"><i class="fa-solid fa-circle-info"></i></span> Make sure your URL starts with <code>http://</code> or <code>https://</code>.<br>
+      <span class="url-step-number url-step-check"><i class="fa-solid fa-circle-check"></i></span> Example: <code>https://example.com</code>
+    </p>
   </div>
 
   <div class="footer">
