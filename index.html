@@ -174,7 +174,7 @@
 
   <script>
     function shortenUrl(event) {
-      const button = event.target;
+      const button = event.target.closest("button");
       button.disabled = true;
       button.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Processing...';
 
@@ -209,7 +209,7 @@
       shortUrl.select();
       navigator.clipboard.writeText(shortUrl.value);
 
-      const copyBtn = event.target;
+      const copyBtn = event.target.closest("button");
       const oldText = copyBtn.innerHTML;
       copyBtn.innerHTML = '<i class="fa-solid fa-check"></i> Copied!';
       setTimeout(() => copyBtn.innerHTML = oldText, 2000);
