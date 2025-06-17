@@ -34,10 +34,17 @@
       display: flex;
       flex-direction: column;
       min-height: 100vh;
-      justify-content: center;
-      align-items: center;
       padding: 20px;
       color: #333;
+    }
+    .content-wrapper {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      flex-grow: 1;
+      width: 100%;
+      padding-top: 40px; /* Added top padding */
     }
     .container {
       background: rgba(255, 255, 255, 0.95);
@@ -50,6 +57,7 @@
       position: relative;
       overflow: hidden;
       z-index: 1;
+      margin-bottom: 30px; /* Added space between container and how-to-use */
     }
     .container::before {
       content: "";
@@ -78,6 +86,7 @@
       font-size: 2.5rem;
       margin-bottom: 25px;
       text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      padding-top: 10px; /* Added padding to title */
     }
     h1 i {
       margin-right: 12px;
@@ -187,7 +196,6 @@
     .how-to-use {
       background: rgba(255, 255, 255, 0.95);
       padding: 30px;
-      margin-top: 30px;
       margin-bottom: 100px;
       width: 90%;
       max-width: 550px;
@@ -316,82 +324,87 @@
       .button-group { flex-direction: column; }
       button, .footer button { width: 100%; margin: 10px 0; }
       .step { padding: 15px; }
+      .content-wrapper {
+        padding-top: 20px; /* Less padding on mobile */
+      }
     }
   </style>
 </head>
 
 <body>
-  <div class="container">
-    <h1><i class="fa-solid fa-link"></i> URL Shortener</h1>
-    
-    <div class="input-group">
-      <input type="text" id="longUrl" placeholder="https://example.com">
-    </div>
-    
-    <button id="shortenButton" onclick="shortenUrl()">
-      <i class="fa-solid fa-wand-magic-sparkles"></i> Shorten URL
-    </button>
+  <div class="content-wrapper">
+    <div class="container">
+      <h1><i class="fa-solid fa-link"></i> URL Shortener</h1>
+      
+      <div class="input-group">
+        <input type="text" id="longUrl" placeholder="https://example.com">
+      </div>
+      
+      <button id="shortenButton" onclick="shortenUrl()">
+        <i class="fa-solid fa-wand-magic-sparkles"></i> Shorten URL
+      </button>
 
-    <div class="error-message" id="errorMessage">
-      <i class="fa-solid fa-triangle-exclamation"></i> <span id="errorText"></span>
-    </div>
+      <div class="error-message" id="errorMessage">
+        <i class="fa-solid fa-triangle-exclamation"></i> <span id="errorText"></span>
+      </div>
 
-    <div class="result" id="result">
-      <h2><i class="fa-solid fa-check-circle"></i> Shortened URL</h2>
-      <input type="text" id="shortUrl" readonly>
-      <div class="button-group">
-        <button onclick="copyShort()">
-          <i class="fa-solid fa-copy"></i> Copy
-        </button>
-        <a id="openLink" href="#" target="_blank">
-          <button>
-            <i class="fa-solid fa-up-right-from-square"></i> Open
+      <div class="result" id="result">
+        <h2><i class="fa-solid fa-check-circle"></i> Shortened URL</h2>
+        <input type="text" id="shortUrl" readonly>
+        <div class="button-group">
+          <button onclick="copyShort()">
+            <i class="fa-solid fa-copy"></i> Copy
           </button>
-        </a>
+          <a id="openLink" href="#" target="_blank">
+            <button>
+              <i class="fa-solid fa-up-right-from-square"></i> Open
+            </button>
+          </a>
+        </div>
+        <div class="success-message" id="copiedMessage">
+          <i class="fa-solid fa-check"></i> URL copied to clipboard!
+        </div>
       </div>
-      <div class="success-message" id="copiedMessage">
-        <i class="fa-solid fa-check"></i> URL copied to clipboard!
+      
+      <div class="api-info">
+        <i class="fa-solid fa-tags"></i> I am not a developer, I am a common man.
       </div>
     </div>
-    
-    <div class="api-info">
-      <i class="fa-solid fa-tags"></i> I am not a developer, I am a common man.
-    </div>
-  </div>
 
-  <div class="how-to-use">
-    <h2><i class="fa-solid fa-circle-info"></i> How to Use</h2>
-    
-    <div class="step">
-      <i class="fa-solid fa-1 one"></i>
-      <div class="step-content">Enter your long URL in the input box above</div>
+    <div class="how-to-use">
+      <h2><i class="fa-solid fa-circle-info"></i> How to Use</h2>
+      
+      <div class="step">
+        <i class="fa-solid fa-1 one"></i>
+        <div class="step-content">Enter your long URL in the input box above</div>
+      </div>
+      
+      <div class="step">
+        <i class="fa-solid fa-2 two"></i>
+        <div class="step-content">Click the <b>"Shorten URL"</b> button</div>
+      </div>
+      
+      <div class="step">
+        <i class="fa-solid fa-3 three"></i>
+        <div class="step-content">Your shortened URL will appear below</div>
+      </div>
+      
+      <div class="step">
+        <i class="fa-solid fa-4 four"></i>
+        <div class="step-content">Click <b>Copy</b> to copy to clipboard or <b>Open</b> to visit the URL</div>
+      </div>
+      
+      <div class="step">
+        <i class="fa-solid fa-circle-info info"></i>
+        <div class="step-content">URL must start with <code>http://</code> or <code>https://</code></div>
+      </div>
+      
+      <div class="step">
+        <i class="fa-solid fa-circle-check check"></i>
+        <div class="step-content">Example: <code>https://example.com</code></div>
+      </div>
     </div>
-    
-    <div class="step">
-      <i class="fa-solid fa-2 two"></i>
-      <div class="step-content">Click the <b>"Shorten URL"</b> button</div>
-    </div>
-    
-    <div class="step">
-      <i class="fa-solid fa-3 three"></i>
-      <div class="step-content">Your shortened URL will appear below</div>
-    </div>
-    
-    <div class="step">
-      <i class="fa-solid fa-4 four"></i>
-      <div class="step-content">Click <b>Copy</b> to copy to clipboard or <b>Open</b> to visit the URL</div>
-    </div>
-    
-    <div class="step">
-      <i class="fa-solid fa-circle-info info"></i>
-      <div class="step-content">URL must start with <code>http://</code> or <code>https://</code></div>
-    </div>
-    
-    <div class="step">
-      <i class="fa-solid fa-circle-check check"></i>
-      <div class="step-content">Example: <code>https://example.com</code></div>
-    </div>
-  </div>
+  </div> <!-- End of content-wrapper -->
 
   <div class="footer">
     <button onclick="window.location.reload()">
