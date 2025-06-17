@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>🔗 URL Shortener</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
@@ -17,7 +16,7 @@
       justify-content: center;
       align-items: center;
     }
-    .container {
+    .container, .how-to-use {
       background: #fff;
       padding: 25px 18px;
       border-radius: 16px;
@@ -67,32 +66,25 @@
       border: 1px solid #ccc;
       border-radius: 6px;
     }
-
-    /* How to Use Design */
     .how-to-use {
+      padding: 22px 16px;
+      margin-bottom: 60px;
       background-color: #f8f9fa;
-      padding: 22px 20px;
-      margin-bottom: 80px;
-      width: 90%;
-      max-width: 500px;
-      border-radius: 16px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-      text-align: left;
     }
     .how-to-use h2 {
-      text-align: center;
       color: #333;
-      margin-bottom: 15px;
-      font-size: 1.8rem;
+      margin-bottom: 12px;
+      font-size: 1.6rem;
     }
     .step {
       background-color: #f1f1f1;
       border-radius: 8px;
-      margin-bottom: 10px;
-      padding: 10px 12px;
+      margin-bottom: 8px;
+      padding: 8px 12px;
       display: flex;
       align-items: center;
-      gap: 10px;
+      justify-content: center;
+      gap: 8px;
       box-shadow: inset 0 2px 5px rgba(0,0,0,0.05);
     }
     .step i {
@@ -111,7 +103,6 @@
     .four  { background-color: #2ecc71; }
     .info  { background-color: #9b59b6; }
     .check { background-color: #27ae60; }
-
     .footer {
       position: fixed;
       bottom: 0;
@@ -138,11 +129,9 @@
       transform: translateY(-2px);
       box-shadow: 0 6px 20px rgba(0,0,0,0.3);
     }
-
     @media(max-width:600px){
       button, .footer button { width: 90%; margin-bottom: 10px; }
       input[type="text"] { width: 100%; }
-      .how-to-use { text-align: left; }
     }
   </style>
 </head>
@@ -183,7 +172,7 @@
       const button = event.target;
       button.disabled = true;
       button.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Processing...';
-
+      
       const longUrl = document.getElementById('longUrl').value.trim();
       if (!longUrl.startsWith("http://") && !longUrl.startsWith("https://")) {
         alert("Please enter a valid URL starting with http:// or https://");
