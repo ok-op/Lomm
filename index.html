@@ -3,10 +3,9 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <meta name="description" content="Simple and fast URL shortener tool powered by is.gd API. Shorten long URLs easily.">
-  <title>URL Shortener</title>
-  <link rel="icon" href="https://i.ibb.co/j9n6nZxD/Op-log.png" type="image/x-icon">
+  <title>🔗 URL Shortener</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
@@ -15,128 +14,133 @@
       display: flex;
       flex-direction: column;
       min-height: 100vh;
+      justify-content: center;
+      align-items: center;
     }
-    .container {
+    .container, .how-to-use {
       background: #fff;
-      padding: 30px 20px;
-      border-radius: 12px;
-      box-shadow: 0 8px 20px rgba(0,0,0,0.2);
-      margin: auto;
+      padding: 25px 18px;
+      border-radius: 16px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.25);
+      margin-bottom: 20px;
       width: 90%;
       max-width: 500px;
       text-align: center;
     }
     h2 {
-      margin-bottom: 15px;
       color: #333;
-      font-weight: bold;
-      font-size: 1.8rem;
+      font-size: 2rem;
+      margin-bottom: 15px;
     }
     input[type="text"] {
       width: 90%;
       padding: 12px;
-      margin: 10px 0;
+      margin: 12px 0;
       border-radius: 6px;
       border: 1px solid #ccc;
-      box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
+      box-shadow: inset 0 1px 4px rgba(0,0,0,0.1);
     }
     button {
-      padding: 12px 20px;
+      padding: 12px 24px;
       margin: 8px 5px;
-      border-radius: 8px;
+      border-radius: 30px;
       background-color: #007bff;
       color: #fff;
       border: none;
       cursor: pointer;
-      box-shadow: 0 4px #0056b3, 0 8px 15px rgba(0,0,0,0.2);
-      transition: transform 0.1s, box-shadow 0.3s;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+      transition: 0.3s ease;
     }
     button:hover {
       background-color: #0056b3;
       transform: translateY(-2px);
-      box-shadow: 0 6px #004080, 0 12px 20px rgba(0,0,0,0.3);
+      box-shadow: 0 6px 15px rgba(0,0,0,0.3);
     }
     .result {
-      margin-top: 20px;
+      margin-top: 15px;
     }
+    .result input {
+      width: 90%;
+      padding: 8px;
+      margin: 10px 0;
+      text-align: center;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+    }
+
+    /* How to Use Design */
+    .how-to-use {
+      padding: 22px 16px;
+      background-color: #f8f9fa;
+    }
+    .how-to-use h2 {
+      color: #333;
+      margin-bottom: 12px;
+      font-size: 1.6rem;
+    }
+    .step {
+      background-color: #f1f1f1;
+      border-radius: 8px;
+      margin-bottom: 8px;
+      padding: 8px 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      box-shadow: inset 0 2px 5px rgba(0,0,0,0.05);
+    }
+    .step i {
+      width: 28px;
+      height: 28px;
+      line-height: 28px;
+      text-align: center;
+      border-radius: 50%;
+      color: #fff;
+      font-size: 0.9rem;
+      flex-shrink: 0;
+    }
+    .one   { background-color: #e74c3c; }
+    .two   { background-color: #e67e22; }
+    .three { background-color: #3498db; }
+    .four  { background-color: #2ecc71; }
+    .info  { background-color: #9b59b6; }
+    .check { background-color: #27ae60; }
+
+    /* Footer Style */
     .footer {
       position: fixed;
       bottom: 0;
       width: 100%;
-      background-color: #007bff;
+      background: linear-gradient(90deg, #007bff, #0056b3);
       color: #fff;
-      padding: 10px 0;
+      padding: 12px 0;
       text-align: center;
       box-shadow: 0 -4px 10px rgba(0,0,0,0.2);
     }
     .footer button {
       background-color: #fff;
       color: #007bff;
-      padding: 8px 16px;
-      border-radius: 6px;
-      box-shadow: 0 4px rgba(0,0,0,0.2);
-      border: 1px solid #007bff;
+      padding: 8px 24px;
+      border-radius: 30px;
+      border: none;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+      font-weight: bold;
+      transition: 0.3s ease;
     }
     .footer button:hover {
-      background-color: #007bff;
+      background: #007bff;
       color: #fff;
-      border-color: #fff;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(0,0,0,0.3);
     }
 
-    /* =============WOODcraft Mirror Zone============= */
-    /* ✅ How to Use Section CSS ✅ */
-    .how-to-use {
-      background-color: #f1f5f9;
-      border-radius: 12px;
-      padding: 20px 16px;
-      margin: 20px auto;
-      max-width: 500px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-    }
-    .how-to-use h2 {
-      margin-bottom: 12px;
-      color: #333;
-      font-size: 1.6rem;
-    }
-    .how-to-use p {
-      line-height: 1.8;
-      color: #333;
-      font-size: 1rem;
-      text-align: left;
-    }
-    .url-step-number {
-      display: inline-block;
-      width: 26px;
-      height: 26px;
-      line-height: 26px;
-      text-align: center;
-      border-radius: 50%;
-      color: #fff;
-      margin-right: 8px;
-      font-weight: bold;
-      font-size: 0.9rem;
-    }
-    .url-step-one { background-color: #e74c3c; }     /* লাল */
-    .url-step-two { background-color: #e67e22; }     /* কমলা */
-    .url-step-three { background-color: #3498db; }   /* নীল */
-    .url-step-four { background-color: #2ecc71; }    /* সবুজ */
-    .url-step-info { background-color: #9b59b6; }    /* বেগুনি */
-    .url-step-check { background-color: #27ae60; }   /* গাঢ় সবুজ */
-
-    /* =============WOODcraft Mirror Zone============= */
-    /* ✅ Responsive (for small devices) */
-    @media (max-width: 600px) {
-      .container {
-        width: 92%;
-        margin: 20px auto;
-        padding: 20px 15px;
-      }
-      input[type="text"] {
-        width: 100%;
-      }
+    @media(max-width:600px){
+      button, .footer button { width: 90%; margin-bottom: 10px; }
+      input[type="text"] { width: 100%; }
     }
   </style>
 </head>
+
 <body>
 
   <div class="container">
@@ -156,14 +160,12 @@
 
   <div class="how-to-use">
     <h2><i class="fa-solid fa-circle-info"></i> How to Use</h2>
-    <p>
-      <span class="url-step-number url-step-one">1</span> Enter your long URL in the input box above.<br>
-      <span class="url-step-number url-step-two">2</span> Click the <b>"Shorten URL"</b> button.<br>
-      <span class="url-step-number url-step-three">3</span> Your shortened URL will be displayed below with <b>Copy</b> and <b>Open</b> buttons.<br>
-      <span class="url-step-number url-step-four">4</span> Click <b>Copy</b> to copy the URL or <b>Open</b> to visit it directly.<br>
-      <span class="url-step-number url-step-info"><i class="fa-solid fa-circle-info"></i></span> Make sure your URL starts with <code>http://</code> or <code>https://</code>.<br>
-      <span class="url-step-number url-step-check"><i class="fa-solid fa-circle-check"></i></span> Example: <code>https://example.com</code>
-    </p>
+    <div class="step"><i class="fa-solid fa-1 one"></i> Enter your long URL in the input box above.</div>
+    <div class="step"><i class="fa-solid fa-2 two"></i> Click the <b>"Shorten URL"</b> button.</div>
+    <div class="step"><i class="fa-solid fa-3 three"></i> Shortened URL will be shown below with <b>Copy</b> & <b>Open</b>.</div>
+    <div class="step"><i class="fa-solid fa-4 four"></i> Click <b>Copy</b> or <b>Open</b> to visit the URL.</div>
+    <div class="step"><i class="fa-solid fa-circle-info info"></i> URL should start with <code>http://</code> or <code>https://</code>.</div>
+    <div class="step"><i class="fa-solid fa-circle-check check"></i> Example: <code>https://example.com</code></div>
   </div>
 
   <div class="footer">
