@@ -298,7 +298,7 @@
       <input type="text" id="longUrl" placeholder="https://example.com">
     </div>
     
-    <button onclick="shortenUrl(event)">
+    <button onclick="shortenUrl()">
       <i class="fa-solid fa-wand-magic-sparkles"></i> Shorten URL
     </button>
 
@@ -306,7 +306,7 @@
       <h2><i class="fa-solid fa-check-circle"></i> Shortened URL</h2>
       <input type="text" id="shortUrl" readonly>
       <div class="button-group">
-        <button onclick="copyShort(event)">
+        <button onclick="copyShort()">
           <i class="fa-solid fa-copy"></i> Copy
         </button>
         <a id="openLink" href="#" target="_blank">
@@ -366,67 +366,33 @@
   </div>
 
   <script>
-    function shortenUrl(event) {
-      const button = event.target;
-      button.disabled = true;
-      button.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Processing...';
-
+    function shortenUrl() {
       const longUrl = document.getElementById('longUrl').value.trim();
-      
-      // Validate URL format
       if (!longUrl.startsWith("http://") && !longUrl.startsWith("https://")) {
         alert("Please enter a valid URL starting with http:// or https://");
-        button.disabled = false;
-        button.innerHTML = '<i class="fa-solid fa-wand-magic-sparkles"></i> Shorten URL';
         return;
       }
 
-      // Using original is.gd API with CORS proxy solution
-      const proxyUrl = 'https://corsproxy.io/?' + encodeURIComponent(`https://is.gd/create.php?format=json&url=${encodeURIComponent(longUrl)}`);
-      
-      fetch(proxyUrl)
-        .then(response => {
-          if (!response.ok) {
-            throw new Error('Network response was not ok');
-          }
-          return response.json();
-        })
+      fetch(`https://is.gd/create.php?format=json&url=${encodeURIComponent(longUrl)}`)
+        .then(response => response.json())
         .then(data => {
           if (data.shorturl) {
             document.getElementById('shortUrl').value = data.shorturl;
             document.getElementById('openLink').href = data.shorturl;
             document.getElementById('result').style.display = 'block';
-            
-            // Scroll to result
-            document.getElementById('result').scrollIntoView({ behavior: 'smooth', block: 'center' });
           } else {
-            const error = data.error || "Unknown error occurred";
-            throw new Error(error);
+            alert("Error shortening URL.");
           }
         })
-        .catch(err => {
-          console.error("Shortening error:", err);
-          alert(`Failed to shorten URL. Please try again. Error: ${err.message}`);
-        })
-        .finally(() => {
-          button.disabled = false;
-          button.innerHTML = '<i class="fa-solid fa-wand-magic-sparkles"></i> Shorten URL';
-        });
+        .catch(err => alert("Error: " + err));
     }
 
-    function copyShort(event) {
+    function copyShort() {
       const shortUrl = document.getElementById('shortUrl');
       shortUrl.select();
-      document.execCommand('copy');
-      
-      // Show success message
-      const copiedMessage = document.getElementById('copiedMessage');
-      copiedMessage.style.display = 'block';
-      
-      // Hide message after 3 seconds
-      setTimeout(() => {
-        copiedMessage.style.display = 'none';
-      }, 3000);
+      shortUrl.setSelectionRange(0, 99999);
+      navigator.clipboard.writeText(shortUrl.value);
+      alert("Copied to clipboard!");
     }
   </script>
 </body>
