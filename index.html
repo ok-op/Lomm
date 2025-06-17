@@ -301,6 +301,15 @@
       color: #26d0ce;
       margin-right: 5px;
     }
+    .error-message {
+      background: #e74c3c;
+      color: white;
+      padding: 12px;
+      border-radius: 8px;
+      margin-top: 15px;
+      display: none;
+      animation: fadeIn 0.5s ease;
+    }
     @media(max-width: 600px) {
       .container, .how-to-use { padding: 20px; }
       h1 { font-size: 2rem; }
@@ -319,9 +328,13 @@
       <input type="text" id="longUrl" placeholder="https://example.com">
     </div>
     
-    <button onclick="shortenUrl()">
+    <button id="shortenButton" onclick="shortenUrl()">
       <i class="fa-solid fa-wand-magic-sparkles"></i> Shorten URL
     </button>
+
+    <div class="error-message" id="errorMessage">
+      <i class="fa-solid fa-triangle-exclamation"></i> <span id="errorText"></span>
+    </div>
 
     <div class="result" id="result">
       <h2><i class="fa-solid fa-check-circle"></i> Shortened URL</h2>
@@ -342,7 +355,7 @@
     </div>
     
     <div class="api-info">
-      <i class="fa-solid fa-tags"></i> I am not a developer,I am a common man.
+      <i class="fa-solid fa-tags"></i> I am not a developer, I am a common man.
     </div>
   </div>
 
@@ -387,25 +400,62 @@
   </div>
 
   <script>
-    function shortenUrl() {
+    async function shortenUrl() {
+      const button = document.getElementById('shortenButton');
+      const originalText = button.innerHTML;
+      button.disabled = true;
+      button.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Processing...';
+      
       const longUrl = document.getElementById('longUrl').value.trim();
+      
+      // Hide previous error
+      document.getElementById('errorMessage').style.display = 'none';
+      
+      // Validate URL format
       if (!longUrl.startsWith("http://") && !longUrl.startsWith("https://")) {
-        alert("Please enter a valid URL starting with http:// or https://");
+        showError("Please enter a valid URL starting with http:// or https://");
+        button.disabled = false;
+        button.innerHTML = originalText;
         return;
       }
 
-      fetch(`https://is.gd/create.php?format=json&url=${encodeURIComponent(longUrl)}`)
-        .then(response => response.json())
-        .then(data => {
-          if (data.shorturl) {
-            document.getElementById('shortUrl').value = data.shorturl;
-            document.getElementById('openLink').href = data.shorturl;
-            document.getElementById('result').style.display = 'block';
-          } else {
-            alert("Error shortening URL.");
-          }
-        })
-        .catch(err => alert("Error: " + err));
+      try {
+        // Using CORS proxy to avoid CORS issues
+        const proxyUrl = 'https://api.allorigins.win/raw?url=' + 
+                         encodeURIComponent(`https://is.gd/create.php?format=json&url=${encodeURIComponent(longUrl)}`);
+        
+        const response = await fetch(proxyUrl);
+        
+        if (!response.ok) {
+          throw new Error('API request failed');
+        }
+        
+        const data = await response.json();
+        
+        if (data.shorturl) {
+          document.getElementById('shortUrl').value = data.shorturl;
+          document.getElementById('openLink').href = data.shorturl;
+          document.getElementById('result').style.display = 'block';
+          
+          // Scroll to result
+          document.getElementById('result').scrollIntoView({ behavior: 'smooth', block: 'center' });
+        } else {
+          const error = data.error || "Unknown error occurred";
+          throw new Error(error);
+        }
+      } catch (err) {
+        console.error("Shortening error:", err);
+        showError(`Failed to shorten URL. Please try again.`);
+      } finally {
+        button.disabled = false;
+        button.innerHTML = originalText;
+      }
+    }
+
+    function showError(message) {
+      const errorElement = document.getElementById('errorMessage');
+      document.getElementById('errorText').textContent = message;
+      errorElement.style.display = 'block';
     }
 
     function copyShort() {
@@ -413,7 +463,15 @@
       shortUrl.select();
       shortUrl.setSelectionRange(0, 99999);
       navigator.clipboard.writeText(shortUrl.value);
-      alert("Copied to clipboard!");
+      
+      // Show success message
+      const copiedMessage = document.getElementById('copiedMessage');
+      copiedMessage.style.display = 'block';
+      
+      // Hide message after 3 seconds
+      setTimeout(() => {
+        copiedMessage.style.display = 'none';
+      }, 3000);
     }
   </script>
 </body>
