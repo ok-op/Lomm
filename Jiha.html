@@ -44,8 +44,30 @@
       text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.6);
     }
 
+    .api-status {
+      margin-top: 10px;
+      background: linear-gradient(135deg, #00c851, #007e33);
+      display: inline-block;
+      padding: 8px 18px;
+      border-radius: 8px;
+      color: #fff;
+      font-weight: 700;
+      font-size: 1em;
+      text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.4);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+      transition: 0.3s;
+    }
+
+    .api-status i {
+      margin-right: 8px;
+      color: #ffd700;
+    }
+
     .header p {
+      margin-top: 12px;
       font-weight: 500;
+      font-size: 0.95em;
+      text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
     }
 
     .section {
@@ -149,6 +171,7 @@
   <div class="container">
     <div class="header">
       <h1><i class="fa-solid fa-rocket"></i> Terabox API v2.0</h1>
+      <div class="api-status"><i class="fa-solid fa-circle-check"></i> API is working, use me</div>
       <p>Everything is running smoothly and faster than ever.</p>
     </div>
 
@@ -174,7 +197,7 @@
     </div>
 
     <div class="section support">
-      <h2><i class="fa-solid fa-tools"></i> Need help?</h2>
+      <h2><i class="fa-solid fa-screwdriver-wrench"></i> Need help?</h2>
       <p>Contact our support team anytime!</p>
     </div>
 
