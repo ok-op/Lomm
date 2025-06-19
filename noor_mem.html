@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Butterfly Animation</title>
+  <title>Butterfly Animation with Scrolling</title>
   <style>
     * {
       margin: 0;
@@ -13,31 +13,27 @@
     
     body {
       background: #1a1a2e;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 100vh;
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      overflow: hidden;
+      overflow-x: hidden;
+      min-height: 100vh;
+      padding: 20px;
     }
     
     .container {
       position: relative;
-      width: 800px;
-      height: 600px;
+      max-width: 1000px;
+      margin: 0 auto;
       background: linear-gradient(135deg, #16213e, #0f3460);
       border-radius: 20px;
       box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
       overflow: hidden;
-      display: flex;
-      flex-direction: column;
       padding: 20px;
     }
     
     .title {
       text-align: center;
       color: #fff;
-      margin: 20px 0;
+      margin: 20px 0 40px;
     }
     
     .title h1 {
@@ -69,7 +65,7 @@
       color: #e0e1dd;
       font-family: 'Courier New', monospace;
       overflow: auto;
-      flex-grow: 1;
+      margin-bottom: 40px;
     }
     
     .code-header {
@@ -109,7 +105,7 @@
     
     /* Butterfly container */
     .butterflies {
-      position: absolute;
+      position: fixed;
       top: 0;
       left: 0;
       width: 100%;
@@ -163,22 +159,22 @@
       100% { transform: rotate(-30deg); }
     }
     
-    /* Flying path animation */
+    /* Flying path animation - now relative to viewport */
     @keyframes fly {
       0% {
         transform: translateX(0) translateY(0) rotate(0deg);
       }
       25% {
-        transform: translateX(200px) translateY(-50px) rotate(10deg);
+        transform: translateX(25vw) translateY(25vh) rotate(10deg);
       }
       50% {
-        transform: translateX(400px) translateY(0) rotate(0deg);
+        transform: translateX(50vw) translateY(50vh) rotate(0deg);
       }
       75% {
-        transform: translateX(600px) translateY(-50px) rotate(-10deg);
+        transform: translateX(75vw) translateY(25vh) rotate(-10deg);
       }
       100% {
-        transform: translateX(800px) translateY(0) rotate(0deg);
+        transform: translateX(100vw) translateY(0) rotate(0deg);
       }
     }
     
@@ -219,26 +215,134 @@
       animation-delay: 3s;
       filter: hue-rotate(320deg);
     }
+    
+    /* Additional content to demonstrate scrolling */
+    .content-section {
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 15px;
+      padding: 30px;
+      margin: 20px 0;
+      color: #e6e6e6;
+      line-height: 1.8;
+    }
+    
+    .content-section h2 {
+      color: #4cc9f0;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+    
+    .content-columns {
+      display: flex;
+      gap: 20px;
+      margin-top: 30px;
+    }
+    
+    .content-column {
+      flex: 1;
+      background: rgba(0, 0, 0, 0.2);
+      padding: 20px;
+      border-radius: 10px;
+    }
+    
+    .content-column h3 {
+      color: #ff9e00;
+      margin-bottom: 15px;
+      text-align: center;
+    }
+    
+    .content-column p {
+      margin-bottom: 15px;
+    }
+    
+    .scroll-indicator {
+      text-align: center;
+      color: #ff7e5f;
+      margin: 30px 0;
+      font-size: 1.2rem;
+      animation: pulse 2s infinite;
+    }
+    
+    @keyframes pulse {
+      0% { opacity: 0.5; }
+      50% { opacity: 1; }
+      100% { opacity: 0.5; }
+    }
+    
+    /* Responsive design */
+    @media (max-width: 768px) {
+      .container {
+        padding: 15px;
+      }
+      
+      .title h1 {
+        font-size: 2rem;
+      }
+      
+      .content-columns {
+        flex-direction: column;
+      }
+      
+      .butterfly {
+        width: 30px;
+        height: 30px;
+      }
+    }
   </style>
 </head>
 <body>
+  <div class="butterflies">
+    <div class="butterfly"></div>
+    <div class="butterfly"></div>
+    <div class="butterfly"></div>
+    <div class="butterfly"></div>
+    <div class="butterfly"></div>
+  </div>
+  
   <div class="container">
-    <div class="butterflies">
-      <div class="butterfly"></div>
-      <div class="butterfly"></div>
-      <div class="butterfly"></div>
-      <div class="butterfly"></div>
-      <div class="butterfly"></div>
-    </div>
-    
     <div class="title">
-      <h1>Pure CSS Butterfly Animation</h1>
+      <h1>Butterfly Animation with Scrolling Support</h1>
     </div>
     
     <div class="explanation">
+      <h2>Fixed Scrolling Issue</h2>
+      <p>The butterflies are now visible throughout the entire page when scrolling. The key changes made were:</p>
+      <ul>
+        <li>Changed butterfly container to <code>position: fixed</code> instead of absolute</li>
+        <li>Modified flight paths to use viewport units (vw/vh) instead of fixed pixels</li>
+        <li>Added more content to demonstrate scrolling functionality</li>
+        <li>Ensured butterflies stay visible across the entire page</li>
+      </ul>
+    </div>
+    
+    <div class="scroll-indicator">
+      <i class="fas fa-arrow-down"></i> Scroll down to see butterflies across the page <i class="fas fa-arrow-down"></i>
+    </div>
+    
+    <div class="content-section">
       <h2>How the Butterfly Animation Works</h2>
       <p>This animation creates butterflies using pure CSS without any images or GIFs. Each butterfly is created using pseudo-elements for the wings, with gradient backgrounds and border-radius for a natural shape.</p>
       <p>The animation has two parts: wing flapping using transform rotations, and flight paths using keyframe animations. Each butterfly has a unique path, speed, and color variation.</p>
+    </div>
+    
+    <div class="content-columns">
+      <div class="content-column">
+        <h3>Wing Animation</h3>
+        <p>The wing flapping effect is achieved using two pseudo-elements (::before and ::after) for each butterfly. These are positioned to create the left and right wings.</p>
+        <p>Each wing has its own animation that rotates it back and forth, creating a natural flapping motion. The transform-origin property ensures the wings rotate from their base attachment point.</p>
+      </div>
+      
+      <div class="content-column">
+        <h3>Flight Path</h3>
+        <p>The flight path is created with a keyframe animation that moves the butterfly through a series of positions. By using viewport units (vw/vh) instead of fixed pixels, the flight path remains proportional to the screen size.</p>
+        <p>Each butterfly has a unique path defined by different start positions, animation durations, and directions. Some butterflies fly left-to-right while others fly right-to-left.</p>
+      </div>
+      
+      <div class="content-column">
+        <h3>Visual Variety</h3>
+        <p>To create visual variety among the butterflies, we use CSS filters like hue-rotate to change their colors. This creates a natural-looking diversity with minimal code.</p>
+        <p>Each butterfly also has unique size and timing properties, making the animation look more organic and less repetitive.</p>
+      </div>
     </div>
     
     <div class="code-container">
@@ -248,9 +352,9 @@
       </div>
       
       <div class="code-block">
-        <pre><span class="comment">/* Butterfly container */</span>
+        <pre><span class="comment">/* Butterfly container - FIXED POSITION */</span>
 <span class="selector">.butterflies</span> {
-  <span class="property">position</span>: <span class="value">absolute</span>;
+  <span class="property">position</span>: <span class="value">fixed</span>;
   <span class="property">top</span>: <span class="value">0</span>;
   <span class="property">left</span>: <span class="value">0</span>;
   <span class="property">width</span>: <span class="value">100%</span>;
@@ -259,109 +363,51 @@
   <span class="property">z-index</span>: <span class="value">1</span>;
 }
 
-<span class="comment">/* Individual butterfly styling */</span>
-<span class="selector">.butterfly</span> {
-  <span class="property">position</span>: <span class="value">absolute</span>;
-  <span class="property">width</span>: <span class="value">40px</span>;
-  <span class="property">height</span>: <span class="value">40px</span>;
-  <span class="property">animation</span>: <span class="value">fly linear infinite</span>;
-  <span class="property">opacity</span>: <span class="value">0.8</span>;
-  <span class="property">z-index</span>: <span class="value">1</span>;
-}
-
-<span class="comment">/* Butterfly wings */</span>
-<span class="selector">.butterfly::before</span>,
-<span class="selector">.butterfly::after</span> {
-  <span class="property">content</span>: <span class="value">''</span>;
-  <span class="property">position</span>: <span class="value">absolute</span>;
-  <span class="property">width</span>: <span class="value">100%</span>;
-  <span class="property">height</span>: <span class="value">100%</span>;
-  <span class="property">background</span>: <span class="value">linear-gradient(135deg, #ff9a9e, #fad0c4)</span>;
-  <span class="property">border-radius</span>: <span class="value">50%</span>;
-  <span class="property">top</span>: <span class="value">0</span>;
-}
-
-<span class="selector">.butterfly::before</span> {
-  <span class="property">left</span>: <span class="value">-20px</span>;
-  <span class="property">transform-origin</span>: <span class="value">right center</span>;
-  <span class="property">animation</span>: <span class="value">flapLeft 0.8s ease-in-out infinite alternate</span>;
-}
-
-<span class="selector">.butterfly::after</span> {
-  <span class="property">right</span>: <span class="value">-20px</span>;
-  <span class="property">transform-origin</span>: <span class="value">left center</span>;
-  <span class="property">animation</span>: <span class="value">flapRight 0.8s ease-in-out infinite alternate</span>;
-}
-
-<span class="comment">/* Wing animations */</span>
-<span class="selector">@keyframes flapLeft</span> {
-  <span class="value">0%</span> { <span class="property">transform</span>: <span class="value">rotate(-30deg)</span>; }
-  <span class="value">100%</span> { <span class="property">transform</span>: <span class="value">rotate(30deg)</span>; }
-}
-
-<span class="selector">@keyframes flapRight</span> {
-  <span class="value">0%</span> { <span class="property">transform</span>: <span class="value">rotate(30deg)</span>; }
-  <span class="value">100%</span> { <span class="property">transform</span>: <span class="value">rotate(-30deg)</span>; }
-}
-
-<span class="comment">/* Flying path animation */</span>
+<span class="comment">/* Butterfly flight path using viewport units */</span>
 <span class="selector">@keyframes fly</span> {
   <span class="value">0%</span> {
     <span class="property">transform</span>: <span class="value">translateX(0) translateY(0) rotate(0deg)</span>;
   }
   <span class="value">25%</span> {
-    <span class="property">transform</span>: <span class="value">translateX(200px) translateY(-50px) rotate(10deg)</span>;
+    <span class="property">transform</span>: <span class="value">translateX(25vw) translateY(25vh) rotate(10deg)</span>;
   }
   <span class="value">50%</span> {
-    <span class="property">transform</span>: <span class="value">translateX(400px) translateY(0) rotate(0deg)</span>;
+    <span class="property">transform</span>: <span class="value">translateX(50vw) translateY(50vh) rotate(0deg)</span>;
   }
   <span class="value">75%</span> {
-    <span class="property">transform</span>: <span class="value">translateX(600px) translateY(-50px) rotate(-10deg)</span>;
+    <span class="property">transform</span>: <span class="value">translateX(75vw) translateY(25vh) rotate(-10deg)</span>;
   }
   <span class="value">100%</span> {
-    <span class="property">transform</span>: <span class="value">translateX(800px) translateY(0) rotate(0deg)</span>;
+    <span class="property">transform</span>: <span class="value">translateX(100vw) translateY(0) rotate(0deg)</span>;
   }
-}
-
-<span class="comment">/* Different butterfly paths */</span>
-<span class="selector">.butterfly:nth-child(1)</span> {
-  <span class="property">top</span>: <span class="value">20%</span>;
-  <span class="property">animation-duration</span>: <span class="value">15s</span>;
-  <span class="property">animation-delay</span>: <span class="value">0s</span>;
-  <span class="property">filter</span>: <span class="value">hue-rotate(0deg)</span>;
-}
-
-<span class="selector">.butterfly:nth-child(2)</span> {
-  <span class="property">top</span>: <span class="value">40%</span>;
-  <span class="property">animation-duration</span>: <span class="value">18s</span>;
-  <span class="property">animation-delay</span>: <span class="value">2s</span>;
-  <span class="property">filter</span>: <span class="value">hue-rotate(90deg)</span>;
-  <span class="property">animation-direction</span>: <span class="value">reverse</span>;
-}
-
-<span class="selector">.butterfly:nth-child(3)</span> {
-  <span class="property">top</span>: <span class="value">60%</span>;
-  <span class="property">animation-duration</span>: <span class="value">20s</span>;
-  <span class="property">animation-delay</span>: <span class="value">4s</span>;
-  <span class="property">filter</span>: <span class="value">hue-rotate(180deg)</span>;
-}
-
-<span class="selector">.butterfly:nth-child(4)</span> {
-  <span class="property">top</span>: <span class="value">30%</span>;
-  <span class="property">animation-duration</span>: <span class="value">17s</span>;
-  <span class="property">animation-delay</span>: <span class="value">1s</span>;
-  <span class="property">filter</span>: <span class="value">hue-rotate(270deg)</span>;
-  <span class="property">animation-direction</span>: <span class="value">reverse</span>;
-}
-
-<span class="selector">.butterfly:nth-child(5)</span> {
-  <span class="property">top</span>: <span class="value">50%</span>;
-  <span class="property">animation-duration</span>: <span class="value">22s</span>;
-  <span class="property">animation-delay</span>: <span class="value">3s</span>;
-  <span class="property">filter</span>: <span class="value">hue-rotate(320deg)</span>;
 }</pre>
       </div>
     </div>
+    
+    <div class="content-section">
+      <h2>Additional Content Area</h2>
+      <p>This section is here to demonstrate that the butterflies remain visible even when scrolling down the page. The butterflies are now positioned relative to the viewport rather than the container.</p>
+      <p>As you scroll, you'll notice the butterflies continue to fly across the entire screen, creating a beautiful background effect that persists throughout your browsing experience.</p>
+      <p>This solution ensures the animation remains visible regardless of where you are on the page, while maintaining the beautiful visual effect of the butterflies.</p>
+    </div>
+    
+    <div class="content-section">
+      <h2>Technical Details</h2>
+      <p>The key to fixing the scrolling issue was changing the butterfly container from <code>position: absolute</code> to <code>position: fixed</code>. This makes the butterflies relative to the viewport rather than their container.</p>
+      <p>Additionally, I modified the flight paths to use viewport units (vw and vh) instead of fixed pixels. This ensures the butterflies move proportionally to the screen size and remain visible throughout the scrolling experience.</p>
+      <p>The rest of the animation logic remains the same - each butterfly still has unique flight paths, wing flapping animations, and color variations created with CSS filters.</p>
+    </div>
+    
+    <div class="content-section">
+      <h2>Conclusion</h2>
+      <p>With these changes, the butterfly animation now works seamlessly with scrolling. The butterflies will fly across your entire screen regardless of your scroll position, creating a beautiful and immersive experience.</p>
+      <p>This solution maintains all the benefits of the original pure CSS animation while solving the scrolling visibility issue. The butterflies remain lightweight, performant, and completely dependency-free.</p>
+    </div>
   </div>
+  
+  <script>
+    // Add Font Awesome for the arrow icons
+    document.head.innerHTML += '<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">';
+  </script>
 </body>
 </html>
