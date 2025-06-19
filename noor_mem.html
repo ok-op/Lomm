@@ -961,127 +961,102 @@
 
     // Upload single file
     async function uploadFile(file, progressCallback) {
-      return new Promise((resolve, reject) => {
-        const formData = new FormData();
-        formData.append("file", file);
+  return new Promise((resolve, reject) => {
+    const formData = new FormData();
+    formData.append("file", file);
 
-        const xhr = new XMLHttpRequest();
-        
-        xhr.upload.addEventListener('progress', (e) => {
-          if (e.lengthComputable) {
-            progressCallback(Math.round((e.loaded / e.total) * 100));
-          }
-        });
-
-        xhr.onload = () => {
-          try {
-            const response = JSON.parse(xhr.responseText);
-            if (xhr.status === 200) {
-              resolve(response);
-            } else {
-              reject(new Error(response?.status || `HTTP ${xhr.status}`));
-            }
-          } catch (error) {
-            reject(error);
-          }
-        };
-
-        xhr.onerror = () => reject(new Error('Network error'));
-        xhr.ontimeout = () => reject(new Error('Timeout'));
-
-        xhr.open('POST', 'https://upload.gofile.io/uploadfile', true);
-        xhr.timeout = 60000; // 60 seconds timeout
-        xhr.send(formData);
-      });
-    }
+    const xhr = new XMLHttpRequest();
     
-    // Get file icon class
-    function getFileIcon(file) {
-      let iconClass = 'fa-file';
-      
-      if (file.type.startsWith('image/')) {
-        iconClass = 'fa-file-image';
-      } else {
-        const fileExt = file.name.split('.').pop().toLowerCase();
-        
-        if (file.type.includes('pdf')) {
-          iconClass = 'fa-file-pdf';
-        } else if (file.type.includes('zip') || file.type.includes('compressed') || 
-                  ['zip', 'rar', '7z', 'tar', 'gz'].includes(fileExt)) {
-          iconClass = 'fa-file-archive';
-        } else if (file.type.includes('word') || file.type.includes('document') || 
-                  ['doc', 'docx', 'odt'].includes(fileExt)) {
-          iconClass = 'fa-file-word';
-        } else if (file.type.includes('excel') || file.type.includes('spreadsheet') || 
-                  ['xls', 'xlsx', 'csv'].includes(fileExt)) {
-          iconClass = 'fa-file-excel';
-        } else if (file.type.includes('powerpoint') || file.type.includes('presentation') || 
-                  ['ppt', 'pptx'].includes(fileExt)) {
-          iconClass = 'fa-file-powerpoint';
-        } else if (file.type.includes('text') || ['txt', 'rtf'].includes(fileExt)) {
-          iconClass = 'fa-file-alt';
-        } else if (file.type.includes('video')) {
-          iconClass = 'fa-file-video';
-        } else if (file.type.includes('audio')) {
-          iconClass = 'fa-file-audio';
-        }
+    xhr.upload.addEventListener('progress', (e) => {
+      if (e.lengthComputable) {
+        progressCallback(Math.round((e.loaded / e.total) * 100));
       }
-      
-      return iconClass;
-    }
+    });
 
-    // Show upload results
-    function showResults() {
-      resultsDiv.style.display = 'block';
-      resultList.innerHTML = '';
-      
-      uploadResults.forEach(result => {
-        const resultItem = document.createElement('div');
-        resultItem.className = 'result-item';
-
-        if (result.error) {
-          resultItem.innerHTML = `
-            <div class="result-thumbnail" style="color: var(--error);">
-              <i class="fas fa-exclamation-triangle"></i>
-            </div>
-            <div class="result-details">
-              <div class="result-name">${result.name}</div>
-              <div class="result-url" style="color: var(--error)">${result.error}</div>
-            </div>
-          `;
+    xhr.onload = () => {
+      try {
+        const response = JSON.parse(xhr.responseText);
+        if (xhr.status === 200) {
+          resolve(response);
         } else {
-          let directLink = result.url;
-          if (directLink.includes("/d/")) {
-            const id = directLink.split("/d/")[1];
-            directLink = `https://store1.gofile.io/download/web/${id}/${encodeURIComponent(result.name)}`;
-          }
-
-          const combinedText = `File: ${result.name}
-Viewer: ${result.url}
-Direct: ${directLink}`;
-
-          resultItem.innerHTML = `
-            <div class="result-thumbnail">
-              <i class="far ${result.icon}"></i>
-            </div>
-            <div class="result-details">
-              <div class="result-name">${result.name}</div>
-              <div class="result-url"><i class="fas fa-link"></i> <a href="${result.url}" target="_blank">Viewer Link</a></div>
-              <div class="result-url"><i class="fas fa-download"></i> <a href="${directLink}" target="_blank">Direct Download</a></div>
-            </div>
-            <button class="copy-btn" onclick="copyToClipboard('${combinedText.replace(/'/g, "\\'")}', this)">
-              <i class="fas fa-copy"></i> Copy
-            </button>
-          `;
+          reject(new Error(response?.status || `HTTP ${xhr.status}`));
         }
+      } catch (error) {
+        reject(error);
+      }
+    };
 
-        resultList.appendChild(resultItem);
-      });
+    xhr.onerror = () => reject(new Error('Network error'));
+    xhr.ontimeout = () => reject(new Error('Timeout'));
+
+    // Use the best server for upload
+    xhr.open('POST', 'https://store1.gofile.io/uploadFile', true);
+    xhr.timeout = 60000; // 60 seconds timeout
+    xhr.send(formData);
+  });
+}
+
+// Show upload results
+function showResults() {
+  resultsDiv.style.display = 'block';
+  resultList.innerHTML = '';
+  
+  uploadResults.forEach(result => {
+    const resultItem = document.createElement('div');
+    resultItem.className = 'result-item';
+
+    if (result.error) {
+      resultItem.innerHTML = `
+        <div class="result-thumbnail" style="color: var(--error);">
+          <i class="fas fa-exclamation-triangle"></i>
+        </div>
+        <div class="result-details">
+          <div class="result-name">${result.name}</div>
+          <div class="result-url" style="color: var(--error)">${result.error}</div>
+        </div>
+      `;
+    } else {
+      // FIX: Use the correct direct link format
+      const directLink = `https://${result.server}.gofile.io/download/${result.code}/${encodeURIComponent(result.name)}`;
       
-      // Scroll to results
-      resultsDiv.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      const combinedText = `File: ${result.name}
+      Viewer: ${result.viewerLink}
+      Direct: ${directLink}`;
+
+      resultItem.innerHTML = `
+        <div class="result-thumbnail">
+          <i class="far ${result.icon}"></i>
+        </div>
+        <div class="result-details">
+          <div class="result-name">${result.name}</div>
+          <div class="result-url"><i class="fas fa-link"></i> <a href="${result.viewerLink}" target="_blank">Viewer Link</a></div>
+          <div class="result-url"><i class="fas fa-download"></i> <a href="${directLink}" target="_blank">Direct Download</a></div>
+        </div>
+        <button class="copy-btn" onclick="copyToClipboard('${combinedText.replace(/'/g, "\\'")}', this)">
+          <i class="fas fa-copy"></i> Copy
+        </button>
+      `;
     }
 
+    resultList.appendChild(resultItem);
+  });
+  
+  // Scroll to results
+  resultsDiv.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+    // In the uploadFiles loop where you handle the response:
+if (result && result.status === "ok" && result.data) {
+  uploadResults.push({
+    name: file.name,
+    viewerLink: result.data.downloadPage,
+    directLink: result.data.link, // Not used directly
+    server: result.data.server, // Store the server
+    code: result.data.code, // Store the code
+    thumbnail: file.type.startsWith('image/') ? URL.createObjectURL(file) : null,
+    icon: getFileIcon(file)
+  });
+}
     // Copy to clipboard with fallback
     async function copyToClipboard(text, button = null) {
       try {
