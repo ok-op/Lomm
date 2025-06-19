@@ -719,7 +719,7 @@
           <ul>
             <li>Military-grade encryption</li>
           <li>99.9% uptime guarantee</li>
-            <li>Lightning-fast CDN delivery</li>
+          <li>Lightning-fast CDN delivery</li>
             <li>24/7 dedicated support</li>
             <li>Ad-free experience</li>
           </ul>
@@ -921,11 +921,15 @@
 
           // Handle response
           if (result && result.status === "ok" && result.data) {
+            // FIX: Extract server and code correctly
+            const server = result.data.server || 'store1';
+            const code = result.data.code || extractCodeFromUrl(result.data.downloadPage);
+            
             uploadResults.push({
               name: file.name,
               viewerLink: result.data.downloadPage,
-              server: result.data.server,
-              code: result.data.code,
+              server: server,
+              code: code,
               thumbnail: file.type.startsWith('image/') ? URL.createObjectURL(file) : null,
               icon: getFileIcon(file)
             });
@@ -959,6 +963,13 @@
       uploadBtnText.innerHTML = '<i class="fas fa-upload"></i> Upload to GoFile';
       uploadBtn.disabled = false;
     }
+  }
+
+  // Extract code from viewer URL
+  function extractCodeFromUrl(url) {
+    if (!url) return null;
+    const parts = url.split('/');
+    return parts[parts.length - 1];
   }
 
   // Upload single file
@@ -1052,7 +1063,7 @@
           </div>
         `;
       } else {
-        // Fix direct download link
+        // Fix direct download link - use correct format
         const directLink = `https://${result.server}.gofile.io/download/${result.code}/${encodeURIComponent(result.name)}`;
         
         const combinedText = `File: ${result.name}
