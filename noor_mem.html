@@ -1,413 +1,682 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Butterfly Animation with Scrolling</title>
+  <title>FileGarden Pro Uploader</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
+    :root {
+      --primary: #4a6cf7;
+      --primary-dark: #3a5ce4;
+      --success: #28a745;
+      --danger: #dc3545;
+      --dark: #343a40;
+      --light: #f8f9fa;
+      --gray: #6c757d;
+    }
+    
     * {
+      box-sizing: border-box;
       margin: 0;
       padding: 0;
-      box-sizing: border-box;
     }
     
     body {
-      background: #1a1a2e;
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      overflow-x: hidden;
+      line-height: 1.6;
+      background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+      color: #333;
       min-height: 100vh;
       padding: 20px;
     }
     
     .container {
-      position: relative;
-      max-width: 1000px;
-      margin: 0 auto;
-      background: linear-gradient(135deg, #16213e, #0f3460);
-      border-radius: 20px;
-      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
-      overflow: hidden;
-      padding: 20px;
+      max-width: 600px;
+      margin: 30px auto;
+      background: white;
+      padding: 30px;
+      border-radius: 16px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+      transition: transform 0.3s ease;
     }
     
-    .title {
+    .container:hover {
+      transform: translateY(-5px);
+    }
+    
+    h1 {
       text-align: center;
-      color: #fff;
-      margin: 20px 0 40px;
+      margin-bottom: 25px;
+      color: var(--primary);
+      font-weight: 600;
     }
     
-    .title h1 {
-      font-size: 2.5rem;
-      background: linear-gradient(to right, #ff7e5f, #feb47b);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      text-shadow: 0 0 15px rgba(255, 126, 95, 0.4);
+    .upload-area {
+      border: 2px dashed #ccc;
+      border-radius: 12px;
+      padding: 30px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.3s;
+      margin-bottom: 20px;
+      position: relative;
+      overflow: hidden;
     }
     
-    .explanation {
-      background: rgba(255, 255, 255, 0.1);
-      border-radius: 15px;
-      padding: 20px;
-      margin: 20px 0;
-      color: #e6e6e6;
-      line-height: 1.6;
+    .upload-area:hover {
+      border-color: var(--primary);
+      background: rgba(74, 108, 247, 0.05);
     }
     
-    .explanation h2 {
-      color: #4cc9f0;
+    .upload-area.active {
+      border-color: var(--primary);
+      background: rgba(74, 108, 247, 0.1);
+    }
+    
+    .upload-area i {
+      font-size: 48px;
+      color: var(--primary);
+      margin-bottom: 15px;
+    }
+    
+    .upload-area p {
+      margin-bottom: 10px;
+      color: var(--gray);
+    }
+    
+    .upload-area .browse-btn {
+      color: var(--primary);
+      font-weight: 600;
+      cursor: pointer;
+    }
+    
+    #fileInput {
+      display: none;
+    }
+    
+    .preview-container {
+      display: none;
+      margin-top: 25px;
+      animation: fadeIn 0.5s ease;
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .preview-img {
+      width: 100%;
+      max-height: 300px;
+      object-fit: contain;
+      border-radius: 12px;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+      margin-bottom: 20px;
+    }
+    
+    .file-info {
+      background: var(--light);
+      padding: 15px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+    }
+    
+    .file-info p {
+      margin-bottom: 8px;
+      display: flex;
+      justify-content: space-between;
+    }
+    
+    .file-info span:first-child {
+      font-weight: 600;
+      color: var(--dark);
+    }
+    
+    .file-info span:last-child {
+      color: var(--gray);
+    }
+    
+    .link-box {
+      display: flex;
+      margin-top: 15px;
+    }
+    
+    .link-box input {
+      flex: 1;
+      padding: 12px 15px;
+      border: 1px solid #ddd;
+      border-radius: 8px 0 0 8px;
+      font-size: 14px;
+      outline: none;
+      transition: border 0.3s;
+    }
+    
+    .link-box input:focus {
+      border-color: var(--primary);
+    }
+    
+    .link-box button {
+      padding: 0 15px;
+      border: none;
+      background: var(--primary);
+      color: white;
+      border-radius: 0 8px 8px 0;
+      cursor: pointer;
+      transition: background 0.3s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .link-box button:hover {
+      background: var(--primary-dark);
+    }
+    
+    .btn {
+      display: inline-block;
+      padding: 12px 24px;
+      background: var(--primary);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 16px;
+      font-weight: 600;
+      transition: all 0.3s;
+      text-align: center;
+      width: 100%;
+      margin-top: 10px;
+    }
+    
+    .btn:hover {
+      background: var(--primary-dark);
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(74, 108, 247, 0.3);
+    }
+    
+    .btn:disabled {
+      background: #ccc;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+    
+    .btn i {
+      margin-right: 8px;
+    }
+    
+    .progress-container {
+      width: 100%;
+      height: 8px;
+      background: #e9ecef;
+      border-radius: 4px;
+      margin: 15px 0;
+      overflow: hidden;
+      display: none;
+    }
+    
+    .progress-bar {
+      height: 100%;
+      background: var(--primary);
+      width: 0;
+      transition: width 0.3s ease;
+    }
+    
+    .drag-drop-text {
+      font-size: 18px;
       margin-bottom: 10px;
     }
     
-    .code-container {
-      background: #0d1b2a;
-      border-radius: 15px;
-      padding: 20px;
-      color: #e0e1dd;
-      font-family: 'Courier New', monospace;
-      overflow: auto;
-      margin-bottom: 40px;
-    }
-    
-    .code-header {
+    .features {
       display: flex;
       justify-content: space-between;
-      margin-bottom: 15px;
-      color: #4cc9f0;
-    }
-    
-    .code-block {
-      background: #1b263b;
-      padding: 15px;
-      border-radius: 10px;
-      margin-bottom: 20px;
-    }
-    
-    pre {
-      white-space: pre-wrap;
-      line-height: 1.5;
-    }
-    
-    .comment {
-      color: #5a7d9a;
-    }
-    
-    .selector {
-      color: #90e0ef;
-    }
-    
-    .property {
-      color: #ff9e00;
-    }
-    
-    .value {
-      color: #ff70a6;
-    }
-    
-    /* Butterfly container */
-    .butterflies {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      pointer-events: none;
-      z-index: 1;
-    }
-    
-    /* Individual butterfly styling */
-    .butterfly {
-      position: absolute;
-      width: 40px;
-      height: 40px;
-      animation: fly linear infinite;
-      opacity: 0.8;
-      z-index: 1;
-    }
-    
-    /* Butterfly wings animation */
-    .butterfly::before,
-    .butterfly::after {
-      content: '';
-      position: absolute;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(135deg, #ff9a9e, #fad0c4);
-      border-radius: 50%;
-      top: 0;
-    }
-    
-    .butterfly::before {
-      left: -20px;
-      transform-origin: right center;
-      animation: flapLeft 0.8s ease-in-out infinite alternate;
-    }
-    
-    .butterfly::after {
-      right: -20px;
-      transform-origin: left center;
-      animation: flapRight 0.8s ease-in-out infinite alternate;
-    }
-    
-    /* Wing animations */
-    @keyframes flapLeft {
-      0% { transform: rotate(-30deg); }
-      100% { transform: rotate(30deg); }
-    }
-    
-    @keyframes flapRight {
-      0% { transform: rotate(30deg); }
-      100% { transform: rotate(-30deg); }
-    }
-    
-    /* Flying path animation - now relative to viewport */
-    @keyframes fly {
-      0% {
-        transform: translateX(0) translateY(0) rotate(0deg);
-      }
-      25% {
-        transform: translateX(25vw) translateY(25vh) rotate(10deg);
-      }
-      50% {
-        transform: translateX(50vw) translateY(50vh) rotate(0deg);
-      }
-      75% {
-        transform: translateX(75vw) translateY(25vh) rotate(-10deg);
-      }
-      100% {
-        transform: translateX(100vw) translateY(0) rotate(0deg);
-      }
-    }
-    
-    /* Different butterfly styles and paths */
-    .butterfly:nth-child(1) {
-      top: 20%;
-      animation-duration: 15s;
-      animation-delay: 0s;
-      filter: hue-rotate(0deg);
-    }
-    
-    .butterfly:nth-child(2) {
-      top: 40%;
-      animation-duration: 18s;
-      animation-delay: 2s;
-      filter: hue-rotate(90deg);
-      animation-direction: reverse;
-    }
-    
-    .butterfly:nth-child(3) {
-      top: 60%;
-      animation-duration: 20s;
-      animation-delay: 4s;
-      filter: hue-rotate(180deg);
-    }
-    
-    .butterfly:nth-child(4) {
-      top: 30%;
-      animation-duration: 17s;
-      animation-delay: 1s;
-      filter: hue-rotate(270deg);
-      animation-direction: reverse;
-    }
-    
-    .butterfly:nth-child(5) {
-      top: 50%;
-      animation-duration: 22s;
-      animation-delay: 3s;
-      filter: hue-rotate(320deg);
-    }
-    
-    /* Additional content to demonstrate scrolling */
-    .content-section {
-      background: rgba(255, 255, 255, 0.05);
-      border-radius: 15px;
-      padding: 30px;
-      margin: 20px 0;
-      color: #e6e6e6;
-      line-height: 1.8;
-    }
-    
-    .content-section h2 {
-      color: #4cc9f0;
-      margin-bottom: 20px;
-      text-align: center;
-    }
-    
-    .content-columns {
-      display: flex;
-      gap: 20px;
+      flex-wrap: wrap;
       margin-top: 30px;
     }
     
-    .content-column {
+    .feature {
       flex: 1;
-      background: rgba(0, 0, 0, 0.2);
-      padding: 20px;
-      border-radius: 10px;
-    }
-    
-    .content-column h3 {
-      color: #ff9e00;
-      margin-bottom: 15px;
+      min-width: 150px;
       text-align: center;
+      padding: 15px;
+      margin: 10px;
+      background: rgba(74, 108, 247, 0.1);
+      border-radius: 8px;
+      transition: transform 0.3s;
     }
     
-    .content-column p {
+    .feature:hover {
+      transform: translateY(-5px);
+    }
+    
+    .feature i {
+      font-size: 24px;
+      color: var(--primary);
+      margin-bottom: 10px;
+    }
+    
+    .feature h3 {
+      font-size: 16px;
+      margin-bottom: 5px;
+      color: var(--dark);
+    }
+    
+    .feature p {
+      font-size: 14px;
+      color: var(--gray);
+    }
+    
+    .toast {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      padding: 15px 20px;
+      background: var(--success);
+      color: white;
+      border-radius: 8px;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+      display: flex;
+      align-items: center;
+      z-index: 1000;
+      transform: translateX(150%);
+      transition: transform 0.3s ease;
+    }
+    
+    .toast.show {
+      transform: translateX(0);
+    }
+    
+    .toast i {
+      margin-right: 10px;
+    }
+    
+    .settings-panel {
+      margin-top: 20px;
+      padding: 15px;
+      background: var(--light);
+      border-radius: 8px;
+      display: none;
+    }
+    
+    .settings-toggle {
+      text-align: center;
+      margin-top: 15px;
+    }
+    
+    .settings-toggle button {
+      background: none;
+      border: none;
+      color: var(--gray);
+      cursor: pointer;
+      font-size: 14px;
+    }
+    
+    .settings-toggle button:hover {
+      color: var(--primary);
+    }
+    
+    .form-group {
       margin-bottom: 15px;
     }
     
-    .scroll-indicator {
-      text-align: center;
-      color: #ff7e5f;
-      margin: 30px 0;
-      font-size: 1.2rem;
-      animation: pulse 2s infinite;
+    .form-group label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: 600;
+      color: var(--dark);
     }
     
-    @keyframes pulse {
-      0% { opacity: 0.5; }
-      50% { opacity: 1; }
-      100% { opacity: 0.5; }
+    .form-group input[type="text"],
+    .form-group select {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      font-size: 14px;
     }
     
-    /* Responsive design */
     @media (max-width: 768px) {
       .container {
-        padding: 15px;
+        padding: 20px;
       }
       
-      .title h1 {
-        font-size: 2rem;
+      .upload-area {
+        padding: 20px;
       }
       
-      .content-columns {
+      .features {
         flex-direction: column;
       }
       
-      .butterfly {
-        width: 30px;
-        height: 30px;
+      .feature {
+        min-width: 100%;
       }
     }
   </style>
 </head>
 <body>
-  <div class="butterflies">
-    <div class="butterfly"></div>
-    <div class="butterfly"></div>
-    <div class="butterfly"></div>
-    <div class="butterfly"></div>
-    <div class="butterfly"></div>
+  <div class="container">
+    <h1><i class="fas fa-cloud-upload-alt"></i> FileGarden Pro</h1>
+    
+    <div class="upload-area" id="uploadArea">
+      <i class="fas fa-images"></i>
+      <p class="drag-drop-text">Drag & Drop your image here</p>
+      <p>or</p>
+      <span class="browse-btn">Browse Files</span>
+      <p>Supports: JPG, PNG, GIF, WEBP (Max 10MB)</p>
+    </div>
+    
+    <input type="file" id="fileInput" accept="image/*">
+    
+    <div class="progress-container" id="progressContainer">
+      <div class="progress-bar" id="progressBar"></div>
+    </div>
+    
+    <button class="btn" id="uploadBtn" disabled onclick="uploadFile()">
+      <i class="fas fa-upload"></i> Upload Image
+    </button>
+    
+    <div class="settings-toggle">
+      <button id="toggleSettings" onclick="toggleSettings()">
+        <i class="fas fa-cog"></i> Advanced Settings
+      </button>
+    </div>
+    
+    <div class="settings-panel" id="settingsPanel">
+      <div class="form-group">
+        <label for="fileName">Custom Filename (optional)</label>
+        <input type="text" id="fileName" placeholder="Leave blank for original filename">
+      </div>
+      <div class="form-group">
+        <label for="imageQuality">Image Quality</label>
+        <select id="imageQuality">
+          <option value="high">High (original quality)</option>
+          <option value="medium">Medium (balanced)</option>
+          <option value="low">Low (smaller file)</option>
+        </select>
+      </div>
+    </div>
+    
+    <div class="preview-container" id="previewContainer">
+      <div class="file-info" id="fileInfo"></div>
+      <img class="preview-img" id="previewImg">
+      <div class="link-box">
+        <input type="text" id="fileLink" readonly>
+        <button onclick="copyLink()">
+          <i class="fas fa-copy"></i>
+        </button>
+      </div>
+      <div class="link-box" style="margin-top: 10px;">
+        <input type="text" id="markdownLink" readonly>
+        <button onclick="copyLink('markdown')">
+          <i class="fas fa-code"></i>
+        </button>
+      </div>
+      <div class="link-box" style="margin-top: 10px;">
+        <input type="text" id="htmlLink" readonly>
+        <button onclick="copyLink('html')">
+          <i class="fas fa-code"></i>
+        </button>
+      </div>
+    </div>
+    
+    <div class="features">
+      <div class="feature">
+        <i class="fas fa-lock"></i>
+        <h3>Secure Uploads</h3>
+        <p>All files are encrypted during transfer</p>
+      </div>
+      <div class="feature">
+        <i class="fas fa-bolt"></i>
+        <h3>Fast CDN</h3>
+        <p>Delivered through global network</p>
+      </div>
+      <div class="feature">
+        <i class="fas fa-infinity"></i>
+        <h3>No Limits</h3>
+        <p>Unlimited storage and bandwidth</p>
+      </div>
+    </div>
   </div>
   
-  <div class="container">
-    <div class="title">
-      <h1>Butterfly Animation with Scrolling Support</h1>
-    </div>
-    
-    <div class="explanation">
-      <h2>Fixed Scrolling Issue</h2>
-      <p>The butterflies are now visible throughout the entire page when scrolling. The key changes made were:</p>
-      <ul>
-        <li>Changed butterfly container to <code>position: fixed</code> instead of absolute</li>
-        <li>Modified flight paths to use viewport units (vw/vh) instead of fixed pixels</li>
-        <li>Added more content to demonstrate scrolling functionality</li>
-        <li>Ensured butterflies stay visible across the entire page</li>
-      </ul>
-    </div>
-    
-    <div class="scroll-indicator">
-      <i class="fas fa-arrow-down"></i> Scroll down to see butterflies across the page <i class="fas fa-arrow-down"></i>
-    </div>
-    
-    <div class="content-section">
-      <h2>How the Butterfly Animation Works</h2>
-      <p>This animation creates butterflies using pure CSS without any images or GIFs. Each butterfly is created using pseudo-elements for the wings, with gradient backgrounds and border-radius for a natural shape.</p>
-      <p>The animation has two parts: wing flapping using transform rotations, and flight paths using keyframe animations. Each butterfly has a unique path, speed, and color variation.</p>
-    </div>
-    
-    <div class="content-columns">
-      <div class="content-column">
-        <h3>Wing Animation</h3>
-        <p>The wing flapping effect is achieved using two pseudo-elements (::before and ::after) for each butterfly. These are positioned to create the left and right wings.</p>
-        <p>Each wing has its own animation that rotates it back and forth, creating a natural flapping motion. The transform-origin property ensures the wings rotate from their base attachment point.</p>
-      </div>
-      
-      <div class="content-column">
-        <h3>Flight Path</h3>
-        <p>The flight path is created with a keyframe animation that moves the butterfly through a series of positions. By using viewport units (vw/vh) instead of fixed pixels, the flight path remains proportional to the screen size.</p>
-        <p>Each butterfly has a unique path defined by different start positions, animation durations, and directions. Some butterflies fly left-to-right while others fly right-to-left.</p>
-      </div>
-      
-      <div class="content-column">
-        <h3>Visual Variety</h3>
-        <p>To create visual variety among the butterflies, we use CSS filters like hue-rotate to change their colors. This creates a natural-looking diversity with minimal code.</p>
-        <p>Each butterfly also has unique size and timing properties, making the animation look more organic and less repetitive.</p>
-      </div>
-    </div>
-    
-    <div class="code-container">
-      <div class="code-header">
-        <h3>CSS Implementation</h3>
-        <span>butterfly.css</span>
-      </div>
-      
-      <div class="code-block">
-        <pre><span class="comment">/* Butterfly container - FIXED POSITION */</span>
-<span class="selector">.butterflies</span> {
-  <span class="property">position</span>: <span class="value">fixed</span>;
-  <span class="property">top</span>: <span class="value">0</span>;
-  <span class="property">left</span>: <span class="value">0</span>;
-  <span class="property">width</span>: <span class="value">100%</span>;
-  <span class="property">height</span>: <span class="value">100%</span>;
-  <span class="property">pointer-events</span>: <span class="value">none</span>;
-  <span class="property">z-index</span>: <span class="value">1</span>;
-}
-
-<span class="comment">/* Butterfly flight path using viewport units */</span>
-<span class="selector">@keyframes fly</span> {
-  <span class="value">0%</span> {
-    <span class="property">transform</span>: <span class="value">translateX(0) translateY(0) rotate(0deg)</span>;
-  }
-  <span class="value">25%</span> {
-    <span class="property">transform</span>: <span class="value">translateX(25vw) translateY(25vh) rotate(10deg)</span>;
-  }
-  <span class="value">50%</span> {
-    <span class="property">transform</span>: <span class="value">translateX(50vw) translateY(50vh) rotate(0deg)</span>;
-  }
-  <span class="value">75%</span> {
-    <span class="property">transform</span>: <span class="value">translateX(75vw) translateY(25vh) rotate(-10deg)</span>;
-  }
-  <span class="value">100%</span> {
-    <span class="property">transform</span>: <span class="value">translateX(100vw) translateY(0) rotate(0deg)</span>;
-  }
-}</pre>
-      </div>
-    </div>
-    
-    <div class="content-section">
-      <h2>Additional Content Area</h2>
-      <p>This section is here to demonstrate that the butterflies remain visible even when scrolling down the page. The butterflies are now positioned relative to the viewport rather than the container.</p>
-      <p>As you scroll, you'll notice the butterflies continue to fly across the entire screen, creating a beautiful background effect that persists throughout your browsing experience.</p>
-      <p>This solution ensures the animation remains visible regardless of where you are on the page, while maintaining the beautiful visual effect of the butterflies.</p>
-    </div>
-    
-    <div class="content-section">
-      <h2>Technical Details</h2>
-      <p>The key to fixing the scrolling issue was changing the butterfly container from <code>position: absolute</code> to <code>position: fixed</code>. This makes the butterflies relative to the viewport rather than their container.</p>
-      <p>Additionally, I modified the flight paths to use viewport units (vw and vh) instead of fixed pixels. This ensures the butterflies move proportionally to the screen size and remain visible throughout the scrolling experience.</p>
-      <p>The rest of the animation logic remains the same - each butterfly still has unique flight paths, wing flapping animations, and color variations created with CSS filters.</p>
-    </div>
-    
-    <div class="content-section">
-      <h2>Conclusion</h2>
-      <p>With these changes, the butterfly animation now works seamlessly with scrolling. The butterflies will fly across your entire screen regardless of your scroll position, creating a beautiful and immersive experience.</p>
-      <p>This solution maintains all the benefits of the original pure CSS animation while solving the scrolling visibility issue. The butterflies remain lightweight, performant, and completely dependency-free.</p>
-    </div>
+  <div class="toast" id="toast">
+    <i class="fas fa-check-circle"></i>
+    <span id="toastMessage">Link copied to clipboard!</span>
   </div>
   
   <script>
-    // Add Font Awesome for the arrow icons
-    document.head.innerHTML += '<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">';
+    // DOM Elements
+    const fileInput = document.getElementById('fileInput');
+    const uploadArea = document.getElementById('uploadArea');
+    const uploadBtn = document.getElementById('uploadBtn');
+    const previewContainer = document.getElementById('previewContainer');
+    const previewImg = document.getElementById('previewImg');
+    const fileInfo = document.getElementById('fileInfo');
+    const fileLink = document.getElementById('fileLink');
+    const markdownLink = document.getElementById('markdownLink');
+    const htmlLink = document.getElementById('htmlLink');
+    const progressContainer = document.getElementById('progressContainer');
+    const progressBar = document.getElementById('progressBar');
+    const toast = document.getElementById('toast');
+    const toastMessage = document.getElementById('toastMessage');
+    const settingsPanel = document.getElementById('settingsPanel');
+    const toggleSettings = document.getElementById('toggleSettings');
+    const fileNameInput = document.getElementById('fileName');
+    const imageQuality = document.getElementById('imageQuality');
+    
+    // Drag and drop functionality - FIXED
+    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+      uploadArea.addEventListener(eventName, preventDefaults, false);
+    });
+    
+    function preventDefaults(e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+    
+    ['dragenter', 'dragover'].forEach(eventName => {
+      uploadArea.addEventListener(eventName, highlight, false);
+    });
+    
+    ['dragleave', 'drop'].forEach(eventName => {
+      uploadArea.addEventListener(eventName, unhighlight, false);
+    });
+    
+    function highlight() {
+      uploadArea.classList.add('active');
+    }
+    
+    function unhighlight() {
+      uploadArea.classList.remove('active');
+    }
+    
+    uploadArea.addEventListener('drop', handleDrop, false);
+    
+    function handleDrop(e) {
+      const dt = e.dataTransfer;
+      const files = dt.files;
+      
+      if (files.length) {
+        fileInput.files = files;
+        handleFileSelection();
+      }
+    }
+    
+    uploadArea.addEventListener('click', () => {
+      fileInput.click();
+    });
+    
+    fileInput.addEventListener('change', handleFileSelection);
+    
+    function handleFileSelection() {
+      const file = fileInput.files[0];
+      
+      if (!file) return;
+      
+      // Check file type
+      if (!file.type.match('image.*')) {
+        showToast('Please select an image file', 'error');
+        return;
+      }
+      
+      // Check file size (10MB limit)
+      if (file.size > 10 * 1024 * 1024) {
+        showToast('File size exceeds 10MB limit', 'error');
+        return;
+      }
+      
+      // Enable upload button
+      uploadBtn.disabled = false;
+      
+      // Show file info
+      const fileSize = (file.size / (1024 * 1024)).toFixed(2);
+      
+      fileInfo.innerHTML = `
+        <p><span>Filename:</span> <span>${file.name}</span></p>
+        <p><span>Type:</span> <span>${file.type}</span></p>
+        <p><span>Size:</span> <span>${fileSize} MB</span></p>
+      `;
+      
+      // Show preview
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        previewImg.src = e.target.result;
+      };
+      reader.readAsDataURL(file);
+      
+      previewContainer.style.display = 'block';
+    }
+    
+    function toggleSettings() {
+      settingsPanel.style.display = settingsPanel.style.display === 'block' ? 'none' : 'block';
+      toggleSettings.innerHTML = settingsPanel.style.display === 'block' ? 
+        '<i class="fas fa-times"></i> Hide Settings' : 
+        '<i class="fas fa-cog"></i> Advanced Settings';
+    }
+    
+    async function uploadFile() {
+      const file = fileInput.files[0];
+      if (!file) return;
+      
+      // Disable button during upload
+      uploadBtn.disabled = true;
+      uploadBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Uploading...';
+      
+      // Show progress bar
+      progressContainer.style.display = 'block';
+      
+      const formData = new FormData();
+      formData.append('file', file);
+      
+      // Add custom filename if provided
+      if (fileNameInput.value.trim() !== '') {
+        formData.append('customName', fileNameInput.value.trim());
+      }
+      
+      // Add quality setting
+      formData.append('quality', imageQuality.value);
+      
+      try {
+        const xhr = new XMLHttpRequest();
+        
+        xhr.upload.onprogress = (e) => {
+          if (e.lengthComputable) {
+            const percentComplete = (e.loaded / e.total) * 100;
+            progressBar.style.width = percentComplete + '%';
+          }
+        };
+        
+        xhr.onload = () => {
+          if (xhr.status === 200) {
+            const response = JSON.parse(xhr.responseText);
+            handleUploadSuccess(response);
+          } else {
+            handleUploadError(xhr.statusText);
+          }
+        };
+        
+        xhr.onerror = () => {
+          handleUploadError('Network error occurred');
+        };
+        
+        xhr.open('POST', 'https://file.garden/api/upload', true);
+        xhr.send(formData);
+      } catch (error) {
+        handleUploadError(error.message);
+      }
+    }
+    
+    function handleUploadSuccess(response) {
+      const fileUrl = response.url;
+      
+      // Update UI with the link
+      fileLink.value = fileUrl;
+      markdownLink.value = `![${fileInput.files[0].name}](${fileUrl})`;
+      htmlLink.value = `<img src="${fileUrl}" alt="${fileInput.files[0].name}">`;
+      
+      // Reset button
+      uploadBtn.innerHTML = '<i class="fas fa-check-circle"></i> Upload Complete!';
+      
+      // Hide progress bar
+      setTimeout(() => {
+        progressContainer.style.display = 'none';
+        progressBar.style.width = '0%';
+      }, 500);
+      
+      showToast('Image uploaded successfully!');
+    }
+    
+    function handleUploadError(error) {
+      console.error('Upload error:', error);
+      
+      // Reset button
+      uploadBtn.disabled = false;
+      uploadBtn.innerHTML = '<i class="fas fa-upload"></i> Upload Image';
+      
+      // Reset progress
+      progressContainer.style.display = 'none';
+      progressBar.style.width = '0%';
+      
+      showToast(`Upload failed: ${error}`, 'error');
+    }
+    
+    function copyLink(type = 'direct') {
+      let linkToCopy;
+      
+      switch (type) {
+        case 'markdown':
+          linkToCopy = markdownLink;
+          break;
+        case 'html':
+          linkToCopy = htmlLink;
+          break;
+        default:
+          linkToCopy = fileLink;
+      }
+      
+      linkToCopy.select();
+      linkToCopy.setSelectionRange(0, 99999);
+      document.execCommand('copy');
+      
+      showToast(`${type === 'direct' ? 'Link' : type.toUpperCase()} copied to clipboard!`);
+    }
+    
+    function showToast(message, type = 'success') {
+      toast.style.backgroundColor = type === 'error' ? 'var(--danger)' : 'var(--success)';
+      toastMessage.textContent = message;
+      toast.classList.add('show');
+      
+      setTimeout(() => {
+        toast.classList.remove('show');
+      }, 3000);
+    }
+    
+    // Initialize
+    previewContainer.style.display = 'none';
+    progressContainer.style.display = 'none';
+    settingsPanel.style.display = 'none';
   </script>
 </body>
-</html>
+  </html>
