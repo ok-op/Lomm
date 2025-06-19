@@ -718,7 +718,7 @@
           <h3><i class="fas fa-bolt"></i> Why GoFile?</h3>
           <ul>
             <li>Military-grade encryption</li>
-            <li>99.9% uptime guarantee</li>
+          <li>99.9% uptime guarantee</li>
             <li>Lightning-fast CDN delivery</li>
             <li>24/7 dedicated support</li>
             <li>Ad-free experience</li>
@@ -741,434 +741,458 @@
     <span id="toast-message">Link copied to clipboard!</span>
   </div>
   
-  <script>
-    // Global variables
-    let files = [];
-    let uploadResults = [];
+<script>
+  // Global variables
+  let files = [];
+  let uploadResults = [];
+  
+  // DOM elements
+  const dropArea = document.getElementById('dropArea');
+  const fileInput = document.getElementById('fileInput');
+  const filePreviews = document.getElementById('filePreviews');
+  const uploadBtn = document.getElementById('uploadBtn');
+  const uploadBtnText = document.getElementById('uploadBtnText');
+  const statusDiv = document.getElementById('status');
+  const resultsDiv = document.getElementById('results');
+  const resultList = document.getElementById('resultList');
+  const toast = document.getElementById('toast');
+  const toastMessage = document.getElementById('toast-message');
+  
+  // Event listeners
+  dropArea.addEventListener('dragover', (e) => {
+    e.preventDefault();
+    dropArea.classList.add('highlight');
+  });
+  
+  dropArea.addEventListener('dragleave', () => {
+    dropArea.classList.remove('highlight');
+  });
+  
+  dropArea.addEventListener('drop', (e) => {
+    e.preventDefault();
+    dropArea.classList.remove('highlight');
     
-    // DOM elements
-    const dropArea = document.getElementById('dropArea');
-    const fileInput = document.getElementById('fileInput');
-    const filePreviews = document.getElementById('filePreviews');
-    const uploadBtn = document.getElementById('uploadBtn');
-    const uploadBtnText = document.getElementById('uploadBtnText');
-    const statusDiv = document.getElementById('status');
-    const resultsDiv = document.getElementById('results');
-    const resultList = document.getElementById('resultList');
-    const toast = document.getElementById('toast');
-    const toastMessage = document.getElementById('toast-message');
-    
-    // Event listeners
-    dropArea.addEventListener('dragover', (e) => {
-      e.preventDefault();
-      dropArea.classList.add('highlight');
-    });
-    
-    dropArea.addEventListener('dragleave', () => {
-      dropArea.classList.remove('highlight');
-    });
-    
-    dropArea.addEventListener('drop', (e) => {
-      e.preventDefault();
-      dropArea.classList.remove('highlight');
-      
-      if (e.dataTransfer.files.length) {
-        handleFiles(e.dataTransfer.files);
-      }
-    });
-    
-    fileInput.addEventListener('change', () => {
-      if (fileInput.files.length) {
-        handleFiles(fileInput.files);
-      }
-    });
-    
-    // Handle selected files
-    function handleFiles(newFiles) {
-      // Convert FileList to array and filter by size
-      const validFiles = Array.from(newFiles).filter(file => {
-        if (file.size > 100 * 1024 * 1024) {
-          showToast(`File "${file.name}" is too large (max 100MB)`, 'error');
-          return false;
-        }
-        return true;
-      });
-      
-      if (validFiles.length === 0) return;
-      
-      // Add to files array
-      files = [...files, ...validFiles];
-      
-      // Update UI
-      updateFilePreviews();
-      uploadBtn.disabled = files.length === 0;
-      
-      showToast(`Added ${validFiles.length} file(s). Ready to upload.`, 'success');
+    if (e.dataTransfer.files.length) {
+      handleFiles(e.dataTransfer.files);
     }
-    
-    // Update file previews
-    function updateFilePreviews() {
-      filePreviews.innerHTML = '';
-      
-      files.forEach((file, index) => {
-        const fileCard = document.createElement('div');
-        fileCard.className = 'file-card';
-        
-        let thumbnailSrc = '';
-        let iconClass = 'fa-file';
-        
-        if (file.type.startsWith('image/')) {
-          thumbnailSrc = URL.createObjectURL(file);
-          iconClass = 'fa-file-image';
-        } else {
-          // Placeholder icons for different file types
-          const fileType = file.type.split('/')[0];
-          const fileExt = file.name.split('.').pop().toLowerCase();
-          
-          if (file.type.includes('pdf')) {
-            iconClass = 'fa-file-pdf';
-          } else if (file.type.includes('zip') || file.type.includes('compressed') || 
-                    ['zip', 'rar', '7z', 'tar', 'gz'].includes(fileExt)) {
-            iconClass = 'fa-file-archive';
-          } else if (file.type.includes('word') || file.type.includes('document') || 
-                    ['doc', 'docx', 'odt'].includes(fileExt)) {
-            iconClass = 'fa-file-word';
-          } else if (file.type.includes('excel') || file.type.includes('spreadsheet') || 
-                    ['xls', 'xlsx', 'csv'].includes(fileExt)) {
-            iconClass = 'fa-file-excel';
-          } else if (file.type.includes('powerpoint') || file.type.includes('presentation') || 
-                    ['ppt', 'pptx'].includes(fileExt)) {
-            iconClass = 'fa-file-powerpoint';
-          } else if (file.type.includes('text') || ['txt', 'rtf'].includes(fileExt)) {
-            iconClass = 'fa-file-alt';
-          } else if (file.type.includes('video')) {
-            iconClass = 'fa-file-video';
-          } else if (file.type.includes('audio')) {
-            iconClass = 'fa-file-audio';
-          }
-        }
-        
-        if (thumbnailSrc) {
-          fileCard.innerHTML = `
-            <img src="${thumbnailSrc}" alt="${file.name}" class="file-thumbnail">
-            <div class="file-info">
-              <div class="file-name" title="${file.name}">${file.name}</div>
-              <div class="file-size"><i class="far ${iconClass}"></i> ${formatFileSize(file.size)}</div>
-              <div class="progress-container">
-                <div class="progress-bar" id="progress-${index}"></div>
-              </div>
-            </div>
-          `;
-        } else {
-          fileCard.innerHTML = `
-            <div class="file-thumbnail" style="display: flex; justify-content: center; align-items: center; background: #f0f9ff;">
-              <i class="far ${iconClass}" style="font-size: 48px; color: var(--primary); opacity: 0.7;"></i>
-            </div>
-            <div class="file-info">
-              <div class="file-name" title="${file.name}">${file.name}</div>
-              <div class="file-size"><i class="far ${iconClass}"></i> ${formatFileSize(file.size)}</div>
-              <div class="progress-container">
-                <div class="progress-bar" id="progress-${index}"></div>
-              </div>
-            </div>
-          `;
-        }
-        
-        filePreviews.appendChild(fileCard);
-      });
+  });
+  
+  fileInput.addEventListener('change', () => {
+    if (fileInput.files.length) {
+      handleFiles(fileInput.files);
     }
-    
-    // Format file size
-    function formatFileSize(bytes) {
-      if (bytes === 0) return '0 Bytes';
-      const k = 1024;
-      const sizes = ['Bytes', 'KB', 'MB', 'GB'];
-      const i = Math.floor(Math.log(bytes) / Math.log(k));
-      return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
-    }
-    
-    // Upload files to GoFile
-    async function uploadFiles() {
-      if (files.length === 0) {
-        showToast('No files to upload', 'error');
-        return;
+  });
+  
+  // Handle selected files
+  function handleFiles(newFiles) {
+    // Convert FileList to array and filter by size
+    const validFiles = Array.from(newFiles).filter(file => {
+      if (file.size > 100 * 1024 * 1024) {
+        showToast(`File "${file.name}" is too large (max 100MB)`, 'error');
+        return false;
       }
-
-      uploadBtn.disabled = true;
-      uploadBtnText.innerHTML = '<span class="loading"></span> Uploading...';
+      return true;
+    });
+    
+    if (validFiles.length === 0) return;
+    
+    // Add to files array
+    files = [...files, ...validFiles];
+    
+    // Update UI
+    updateFilePreviews();
+    uploadBtn.disabled = files.length === 0;
+    
+    showToast(`Added ${validFiles.length} file(s). Ready to upload.`, 'success');
+  }
+  
+  // Update file previews
+  function updateFilePreviews() {
+    filePreviews.innerHTML = '';
+    
+    files.forEach((file, index) => {
+      const fileCard = document.createElement('div');
+      fileCard.className = 'file-card';
       
-      try {
-        showStatus('Starting upload...');
-        uploadResults = [];
+      let thumbnailSrc = '';
+      let iconClass = 'fa-file';
+      
+      if (file.type.startsWith('image/')) {
+        thumbnailSrc = URL.createObjectURL(file);
+        iconClass = 'fa-file-image';
+      } else {
+        // Placeholder icons for different file types
+        const fileType = file.type.split('/')[0];
+        const fileExt = file.name.split('.').pop().toLowerCase();
+        
+        if (file.type.includes('pdf')) {
+          iconClass = 'fa-file-pdf';
+        } else if (file.type.includes('zip') || file.type.includes('compressed') || 
+                  ['zip', 'rar', '7z', 'tar', 'gz'].includes(fileExt)) {
+          iconClass = 'fa-file-archive';
+        } else if (file.type.includes('word') || file.type.includes('document') || 
+                  ['doc', 'docx', 'odt'].includes(fileExt)) {
+          iconClass = 'fa-file-word';
+        } else if (file.type.includes('excel') || file.type.includes('spreadsheet') || 
+                  ['xls', 'xlsx', 'csv'].includes(fileExt)) {
+          iconClass = 'fa-file-excel';
+        } else if (file.type.includes('powerpoint') || file.type.includes('presentation') || 
+                  ['ppt', 'pptx'].includes(fileExt)) {
+          iconClass = 'fa-file-powerpoint';
+        } else if (file.type.includes('text') || ['txt', 'rtf'].includes(fileExt)) {
+          iconClass = 'fa-file-alt';
+        } else if (file.type.includes('video')) {
+          iconClass = 'fa-file-video';
+        } else if (file.type.includes('audio')) {
+          iconClass = 'fa-file-audio';
+        }
+      }
+      
+      if (thumbnailSrc) {
+        fileCard.innerHTML = `
+          <img src="${thumbnailSrc}" alt="${file.name}" class="file-thumbnail">
+          <div class="file-info">
+            <div class="file-name" title="${file.name}">${file.name}</div>
+            <div class="file-size"><i class="far ${iconClass}"></i> ${formatFileSize(file.size)}</div>
+            <div class="progress-container">
+              <div class="progress-bar" id="progress-${index}"></div>
+            </div>
+          </div>
+        `;
+      } else {
+        fileCard.innerHTML = `
+          <div class="file-thumbnail" style="display: flex; justify-content: center; align-items: center; background: #f0f9ff;">
+            <i class="far ${iconClass}" style="font-size: 48px; color: var(--primary); opacity: 0.7;"></i>
+          </div>
+          <div class="file-info">
+            <div class="file-name" title="${file.name}">${file.name}</div>
+            <div class="file-size"><i class="far ${iconClass}"></i> ${formatFileSize(file.size)}</div>
+            <div class="progress-container">
+              <div class="progress-bar" id="progress-${index}"></div>
+            </div>
+          </div>
+        `;
+      }
+      
+      filePreviews.appendChild(fileCard);
+    });
+  }
+  
+  // Format file size
+  function formatFileSize(bytes) {
+    if (bytes === 0) return '0 Bytes';
+    const k = 1024;
+    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+  }
+  
+  // Upload files to GoFile
+  async function uploadFiles() {
+    if (files.length === 0) {
+      showToast('No files to upload', 'error');
+      return;
+    }
 
-        // Upload files sequentially
-        for (let i = 0; i < files.length; i++) {
-          const file = files[i];
-          showStatus(`Uploading ${i+1}/${files.length}: ${file.name}`);
-          
-          const progressBar = document.getElementById(`progress-${i}`);
-          if (progressBar) {
-            progressBar.style.width = '0%';
-            progressBar.style.background = 'var(--btn-gradient)';
-          }
+    uploadBtn.disabled = true;
+    uploadBtnText.innerHTML = '<span class="loading"></span> Uploading...';
+    
+    try {
+      showStatus('Starting upload...');
+      uploadResults = [];
 
-          try {
-            const result = await uploadFile(file, (progress) => {
-              if (progressBar) {
-                progressBar.style.width = `${progress}%`;
-              }
-            });
+      // Upload files sequentially
+      for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+        showStatus(`Uploading ${i+1}/${files.length}: ${file.name}`);
+        
+        const progressBar = document.getElementById(`progress-${i}`);
+        if (progressBar) {
+          progressBar.style.width = '0%';
+          progressBar.style.background = 'var(--btn-gradient)';
+        }
 
-            // Handle response
-            if (result && result.status === "ok" && result.data) {
-              uploadResults.push({
-                name: file.name,
-                url: result.data.downloadPage || result.data.url,
-                thumbnail: file.type.startsWith('image/') ? URL.createObjectURL(file) : null,
-                icon: getFileIcon(file)
-              });
-            } else {
-              throw new Error(result?.status || 'Upload failed');
+        try {
+          const result = await uploadFile(file, (progress) => {
+            if (progressBar) {
+              progressBar.style.width = `${progress}%`;
             }
-          } catch (error) {
-            console.error(`Error uploading ${file.name}:`, error);
+          });
+
+          // Handle response
+          if (result && result.status === "ok" && result.data) {
             uploadResults.push({
               name: file.name,
-              error: error.message || 'Upload failed'
+              viewerLink: result.data.downloadPage,
+              server: result.data.server,
+              code: result.data.code,
+              thumbnail: file.type.startsWith('image/') ? URL.createObjectURL(file) : null,
+              icon: getFileIcon(file)
             });
-            if (progressBar) {
-              progressBar.style.background = 'var(--error)';
-            }
+          } else {
+            throw new Error(result?.status || 'Upload failed');
+          }
+        } catch (error) {
+          console.error(`Error uploading ${file.name}:`, error);
+          uploadResults.push({
+            name: file.name,
+            error: error.message || 'Upload failed'
+          });
+          if (progressBar) {
+            progressBar.style.background = 'var(--error)';
           }
         }
+      }
 
-        showResults();
-        const successCount = uploadResults.filter(r => !r.error).length;
-        if (successCount > 0) {
-          showToast(`Successfully uploaded ${successCount}/${files.length} files`, 'success');
-        } else {
-          showToast('All uploads failed', 'error');
+      showResults();
+      const successCount = uploadResults.filter(r => !r.error).length;
+      if (successCount > 0) {
+        showToast(`Successfully uploaded ${successCount}/${files.length} files`, 'success');
+      } else {
+        showToast('All uploads failed', 'error');
+      }
+
+    } catch (error) {
+      console.error('Upload error:', error);
+      showToast(`Upload failed: ${error.message}`, 'error');
+    } finally {
+      uploadBtnText.innerHTML = '<i class="fas fa-upload"></i> Upload to GoFile';
+      uploadBtn.disabled = false;
+    }
+  }
+
+  // Upload single file
+  async function uploadFile(file, progressCallback) {
+    return new Promise((resolve, reject) => {
+      const formData = new FormData();
+      formData.append("file", file);
+
+      const xhr = new XMLHttpRequest();
+      
+      xhr.upload.addEventListener('progress', (e) => {
+        if (e.lengthComputable) {
+          progressCallback(Math.round((e.loaded / e.total) * 100));
         }
+      });
 
-      } catch (error) {
-        console.error('Upload error:', error);
-        showToast(`Upload failed: ${error.message}`, 'error');
-      } finally {
-        uploadBtnText.innerHTML = '<i class="fas fa-upload"></i> Upload to GoFile';
-        uploadBtn.disabled = false;
+      xhr.onload = () => {
+        try {
+          const response = JSON.parse(xhr.responseText);
+          if (xhr.status === 200) {
+            resolve(response);
+          } else {
+            reject(new Error(response?.status || `HTTP ${xhr.status}`));
+          }
+        } catch (error) {
+          reject(error);
+        }
+      };
+
+      xhr.onerror = () => reject(new Error('Network error'));
+      xhr.ontimeout = () => reject(new Error('Timeout'));
+
+      xhr.open('POST', 'https://store1.gofile.io/uploadFile', true);
+      xhr.timeout = 60000; // 60 seconds timeout
+      xhr.send(formData);
+    });
+  }
+  
+  // Get file icon class
+  function getFileIcon(file) {
+    let iconClass = 'fa-file';
+    
+    if (file.type.startsWith('image/')) {
+      iconClass = 'fa-file-image';
+    } else {
+      const fileExt = file.name.split('.').pop().toLowerCase();
+      
+      if (file.type.includes('pdf')) {
+        iconClass = 'fa-file-pdf';
+      } else if (file.type.includes('zip') || file.type.includes('compressed') || 
+                ['zip', 'rar', '7z', 'tar', 'gz'].includes(fileExt)) {
+        iconClass = 'fa-file-archive';
+      } else if (file.type.includes('word') || file.type.includes('document') || 
+                ['doc', 'docx', 'odt'].includes(fileExt)) {
+        iconClass = 'fa-file-word';
+      } else if (file.type.includes('excel') || file.type.includes('spreadsheet') || 
+                ['xls', 'xlsx', 'csv'].includes(fileExt)) {
+        iconClass = 'fa-file-excel';
+      } else if (file.type.includes('powerpoint') || file.type.includes('presentation') || 
+                ['ppt', 'pptx'].includes(fileExt)) {
+        iconClass = 'fa-file-powerpoint';
+      } else if (file.type.includes('text') || ['txt', 'rtf'].includes(fileExt)) {
+        iconClass = 'fa-file-alt';
+      } else if (file.type.includes('video')) {
+        iconClass = 'fa-file-video';
+      } else if (file.type.includes('audio')) {
+        iconClass = 'fa-file-audio';
       }
     }
-
-    // Upload single file
-    async function uploadFile(file, progressCallback) {
-  return new Promise((resolve, reject) => {
-    const formData = new FormData();
-    formData.append("file", file);
-
-    const xhr = new XMLHttpRequest();
     
-    xhr.upload.addEventListener('progress', (e) => {
-      if (e.lengthComputable) {
-        progressCallback(Math.round((e.loaded / e.total) * 100));
+    return iconClass;
+  }
+
+  // Show upload results
+  function showResults() {
+    resultsDiv.style.display = 'block';
+    resultList.innerHTML = '';
+    
+    uploadResults.forEach(result => {
+      const resultItem = document.createElement('div');
+      resultItem.className = 'result-item';
+
+      if (result.error) {
+        resultItem.innerHTML = `
+          <div class="result-thumbnail" style="color: var(--error);">
+            <i class="fas fa-exclamation-triangle"></i>
+          </div>
+          <div class="result-details">
+            <div class="result-name">${result.name}</div>
+            <div class="result-url" style="color: var(--error)">${result.error}</div>
+          </div>
+        `;
+      } else {
+        // Fix direct download link
+        const directLink = `https://${result.server}.gofile.io/download/${result.code}/${encodeURIComponent(result.name)}`;
+        
+        const combinedText = `File: ${result.name}
+Viewer: ${result.viewerLink}
+Direct: ${directLink}`;
+
+        resultItem.innerHTML = `
+          <div class="result-thumbnail">
+            <i class="far ${result.icon}"></i>
+          </div>
+          <div class="result-details">
+            <div class="result-name">${result.name}</div>
+            <div class="result-url"><i class="fas fa-link"></i> <a href="${result.viewerLink}" target="_blank">Viewer Link</a></div>
+            <div class="result-url"><i class="fas fa-download"></i> <a href="${directLink}" target="_blank">Direct Download</a></div>
+          </div>
+          <button class="copy-btn" onclick="copyToClipboard('${combinedText.replace(/'/g, "\\'")}', this)">
+            <i class="fas fa-copy"></i> Copy
+          </button>
+        `;
+      }
+
+      resultList.appendChild(resultItem);
+    });
+    
+    // Scroll to results
+    resultsDiv.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  // Copy to clipboard with fallback
+  async function copyToClipboard(text, button = null) {
+    try {
+      // Try modern clipboard API first
+      if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(text);
+      } 
+      // Fallback for older browsers/HTTP
+      else {
+        const textarea = document.createElement('textarea');
+        textarea.className = 'hidden-textarea';
+        textarea.value = text;
+        document.body.appendChild(textarea);
+        textarea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textarea);
+      }
+      
+      // Visual feedback
+      if (button) {
+        const originalHTML = button.innerHTML;
+        button.innerHTML = '<i class="fas fa-check"></i> Copied!';
+        button.style.background = 'rgba(16, 185, 129, 0.2)';
+        button.style.color = 'var(--success)';
+        setTimeout(() => {
+          button.innerHTML = originalHTML;
+          button.style.background = '';
+          button.style.color = '';
+        }, 2000);
+      }
+      showToast('Link copied to clipboard!', 'success');
+    } catch (err) {
+      console.error('Copy failed:', err);
+      showToast('Failed to copy link', 'error');
+    }
+  }
+
+  // Copy all links
+  async function copyAllLinks() {
+    const links = uploadResults
+      .filter(r => !r.error)
+      .map(r => `${r.name}: ${r.viewerLink}`)
+      .join('\n\n');
+    
+    if (!links) {
+      showToast('No links to copy', 'error');
+      return;
+    }
+    
+    await copyToClipboard(links);
+    
+    // Visual feedback for all buttons
+    document.querySelectorAll('.copy-btn').forEach(btn => {
+      const originalHTML = btn.innerHTML;
+      btn.innerHTML = '<i class="fas fa-check"></i> Copied!';
+      btn.style.background = 'rgba(16, 185, 129, 0.2)';
+      btn.style.color = 'var(--success)';
+      setTimeout(() => {
+        btn.innerHTML = originalHTML;
+        btn.style.background = '';
+        btn.style.color = '';
+      }, 2000);
+    });
+  }
+
+  // Clear all files
+  function clearFiles() {
+    // Revoke object URLs
+    files.forEach(file => {
+      if (file.type.startsWith('image/')) {
+        URL.revokeObjectURL(file);
       }
     });
+    
+    files = [];
+    uploadResults = [];
+    filePreviews.innerHTML = '';
+    uploadBtn.disabled = true;
+    resultsDiv.style.display = 'none';
+    statusDiv.style.display = 'none';
+    
+    showToast('All files cleared', 'success');
+  }
 
-    xhr.onload = () => {
-      try {
-        const response = JSON.parse(xhr.responseText);
-        if (xhr.status === 200) {
-          resolve(response);
-        } else {
-          reject(new Error(response?.status || `HTTP ${xhr.status}`));
-        }
-      } catch (error) {
-        reject(error);
-      }
-    };
-
-    xhr.onerror = () => reject(new Error('Network error'));
-    xhr.ontimeout = () => reject(new Error('Timeout'));
-
-    // Use the best server for upload
-    xhr.open('POST', 'https://store1.gofile.io/uploadFile', true);
-    xhr.timeout = 60000; // 60 seconds timeout
-    xhr.send(formData);
-  });
-}
-
-// Show upload results
-function showResults() {
-  resultsDiv.style.display = 'block';
-  resultList.innerHTML = '';
+  // Show status message
+  function showStatus(message, type = '') {
+    statusDiv.style.display = 'flex';
+    statusDiv.innerHTML = `<i class="fas fa-info-circle"></i> ${message}`;
+    statusDiv.className = 'status';
+    
+    if (type) {
+      statusDiv.classList.add(type);
+    }
+  }
   
-  uploadResults.forEach(result => {
-    const resultItem = document.createElement('div');
-    resultItem.className = 'result-item';
-
-    if (result.error) {
-      resultItem.innerHTML = `
-        <div class="result-thumbnail" style="color: var(--error);">
-          <i class="fas fa-exclamation-triangle"></i>
-        </div>
-        <div class="result-details">
-          <div class="result-name">${result.name}</div>
-          <div class="result-url" style="color: var(--error)">${result.error}</div>
-        </div>
-      `;
-    } else {
-      // FIX: Use the correct direct link format
-      const directLink = `https://${result.server}.gofile.io/download/${result.code}/${encodeURIComponent(result.name)}`;
-      
-      const combinedText = `File: ${result.name}
-      Viewer: ${result.viewerLink}
-      Direct: ${directLink}`;
-
-      resultItem.innerHTML = `
-        <div class="result-thumbnail">
-          <i class="far ${result.icon}"></i>
-        </div>
-        <div class="result-details">
-          <div class="result-name">${result.name}</div>
-          <div class="result-url"><i class="fas fa-link"></i> <a href="${result.viewerLink}" target="_blank">Viewer Link</a></div>
-          <div class="result-url"><i class="fas fa-download"></i> <a href="${directLink}" target="_blank">Direct Download</a></div>
-        </div>
-        <button class="copy-btn" onclick="copyToClipboard('${combinedText.replace(/'/g, "\\'")}', this)">
-          <i class="fas fa-copy"></i> Copy
-        </button>
-      `;
-    }
-
-    resultList.appendChild(resultItem);
-  });
-  
-  // Scroll to results
-  resultsDiv.scrollIntoView({ behavior: 'smooth', block: 'start' });
-}
-
-    // In the uploadFiles loop where you handle the response:
-if (result && result.status === "ok" && result.data) {
-  uploadResults.push({
-    name: file.name,
-    viewerLink: result.data.downloadPage,
-    directLink: result.data.link, // Not used directly
-    server: result.data.server, // Store the server
-    code: result.data.code, // Store the code
-    thumbnail: file.type.startsWith('image/') ? URL.createObjectURL(file) : null,
-    icon: getFileIcon(file)
-  });
-}
-    // Copy to clipboard with fallback
-    async function copyToClipboard(text, button = null) {
-      try {
-        // Try modern clipboard API first
-        if (navigator.clipboard && window.isSecureContext) {
-          await navigator.clipboard.writeText(text);
-        } 
-        // Fallback for older browsers/HTTP
-        else {
-          const textarea = document.createElement('textarea');
-          textarea.className = 'hidden-textarea';
-          textarea.value = text;
-          document.body.appendChild(textarea);
-          textarea.select();
-          document.execCommand('copy');
-          document.body.removeChild(textarea);
-        }
-        
-        // Visual feedback
-        if (button) {
-          const originalHTML = button.innerHTML;
-          button.innerHTML = '<i class="fas fa-check"></i> Copied!';
-          button.style.background = 'rgba(16, 185, 129, 0.2)';
-          button.style.color = 'var(--success)';
-          setTimeout(() => {
-            button.innerHTML = originalHTML;
-            button.style.background = '';
-            button.style.color = '';
-          }, 2000);
-        }
-        showToast('Link copied to clipboard!', 'success');
-      } catch (err) {
-        console.error('Copy failed:', err);
-        showToast('Failed to copy link', 'error');
-      }
-    }
-
-    // Copy all links
-    async function copyAllLinks() {
-      const links = uploadResults
-        .filter(r => !r.error)
-        .map(r => `${r.name}: ${r.url}`)
-        .join('\n\n');
-      
-      if (!links) {
-        showToast('No links to copy', 'error');
-        return;
-      }
-      
-      await copyToClipboard(links);
-      
-      // Visual feedback for all buttons
-      document.querySelectorAll('.copy-btn').forEach(btn => {
-        const originalHTML = btn.innerHTML;
-        btn.innerHTML = '<i class="fas fa-check"></i> Copied!';
-        btn.style.background = 'rgba(16, 185, 129, 0.2)';
-        btn.style.color = 'var(--success)';
-        setTimeout(() => {
-          btn.innerHTML = originalHTML;
-          btn.style.background = '';
-          btn.style.color = '';
-        }, 2000);
-      });
-    }
-
-    // Clear all files
-    function clearFiles() {
-      // Revoke object URLs
-      files.forEach(file => {
-        if (file.type.startsWith('image/')) {
-          URL.revokeObjectURL(file);
-        }
-      });
-      
-      files = [];
-      uploadResults = [];
-      filePreviews.innerHTML = '';
-      uploadBtn.disabled = true;
-      resultsDiv.style.display = 'none';
-      statusDiv.style.display = 'none';
-      
-      showToast('All files cleared', 'success');
-    }
-
-    // Show status message
-    function showStatus(message, type = '') {
-      statusDiv.style.display = 'flex';
-      statusDiv.innerHTML = `<i class="fas fa-info-circle"></i> ${message}`;
-      statusDiv.className = 'status';
-      
-      if (type) {
-        statusDiv.classList.add(type);
-      }
+  // Show toast notification
+  function showToast(message, type = 'success') {
+    toast.className = `toast ${type}`;
+    toastMessage.textContent = message;
+    
+    if (type === 'success') {
+      toast.innerHTML = `<i class="fas fa-check-circle"></i> <span id="toast-message">${message}</span>`;
+    } else if (type === 'error') {
+      toast.innerHTML = `<i class="fas fa-exclamation-circle"></i> <span id="toast-message">${message}</span>`;
     }
     
-    // Show toast notification
-    function showToast(message, type = 'success') {
-      toast.className = `toast ${type}`;
-      toastMessage.textContent = message;
-      
-      if (type === 'success') {
-        toast.innerHTML = `<i class="fas fa-check-circle"></i> <span id="toast-message">${message}</span>`;
-      } else if (type === 'error') {
-        toast.innerHTML = `<i class="fas fa-exclamation-circle"></i> <span id="toast-message">${message}</span>`;
-      }
-      
-      toast.classList.add('show');
-      
-      setTimeout(() => {
-        toast.classList.remove('show');
-      }, 3000);
-    }
-  </script>
+    toast.classList.add('show');
+    
+    setTimeout(() => {
+      toast.classList.remove('show');
+    }, 3000);
+  }
+</script>
 </body>
 </html>
