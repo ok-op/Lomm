@@ -94,11 +94,27 @@
       color: var(--gray);
     }
     
-    .upload-area .browse-btn {
-      color: var(--primary);
-      font-weight: 600;
+    .upload-btn {
+      background: var(--primary);
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 8px;
       cursor: pointer;
-      text-decoration: underline;
+      font-size: 16px;
+      font-weight: 600;
+      transition: all 0.3s;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      margin-top: 15px;
+    }
+    
+    .upload-btn:hover {
+      background: var(--primary-dark);
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(74, 108, 247, 0.3);
     }
     
     #fileInput {
@@ -450,12 +466,16 @@
     
     <div class="upload-area" id="uploadArea">
       <i class="fas fa-cloud-upload-alt"></i>
-      <p class="drag-drop-text">Click to select or drag and drop</p>
+      <p class="drag-drop-text">Drag & drop your image here</p>
+      <p>or</p>
+      <button class="upload-btn" id="browseBtn">
+        <i class="fas fa-folder-open"></i> Select File
+      </button>
       <p>Supports: JPG, PNG, GIF, WEBP (Max 10MB)</p>
     </div>
     
     <div class="mobile-upload-hint">
-      <i class="fas fa-mobile-alt"></i> On mobile: Tap anywhere in the box to select a file
+      <i class="fas fa-mobile-alt"></i> On mobile: Tap the button above to select a file
     </div>
     
     <input type="file" id="fileInput" accept="image/*">
@@ -542,6 +562,7 @@
     // DOM Elements
     const fileInput = document.getElementById('fileInput');
     const uploadArea = document.getElementById('uploadArea');
+    const browseBtn = document.getElementById('browseBtn');
     const uploadBtn = document.getElementById('uploadBtn');
     const previewContainer = document.getElementById('previewContainer');
     const previewImg = document.getElementById('previewImg');
@@ -569,6 +590,11 @@
     
     // Event Listeners
     uploadArea.addEventListener('click', () => {
+      fileInput.click();
+    });
+    
+    browseBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
       fileInput.click();
     });
     
@@ -759,4 +785,4 @@
     }
   </script>
 </body>
-</html>
+  </html>
