@@ -38,6 +38,7 @@
       transform-style: preserve-3d;
       position: relative;
       animation: float 6s ease-in-out infinite;
+      overflow: hidden;
     }
 
     @keyframes float {
@@ -133,7 +134,7 @@
     }
 
     @keyframes pulse {
-      0% { box-shadow: 0 6px 15px rgba(0, 0, 0, 0.4), 0 0 15px rgba(233, 30, 99, 0.6); }
+      0% { box-shadow: 0 6px 15px rgba(0, 0, 0, 0.4), 0 0 15s rgba(233, 30, 99, 0.6); }
       100% { box-shadow: 0 6px 15px rgba(0, 0, 0, 0.4), 0 0 25px rgba(233, 30, 99, 0.8); }
     }
 
@@ -374,12 +375,14 @@
 
     .butterfly {
       position: absolute;
-      font-size: 28px;
-      color: rgba(255, 255, 255, 0.8);
-      text-shadow: 0 0 10px rgba(255, 255, 255, 0.7);
+      width: 60px;
+      height: 60px;
       animation: fly linear infinite;
       opacity: 0.7;
       z-index: 1;
+      background-size: contain;
+      background-repeat: no-repeat;
+      background-position: center;
     }
 
     @keyframes fly {
@@ -400,34 +403,19 @@
       }
     }
 
-    /* Butterfly flapping animation */
-    .butterfly i {
-      display: inline-block;
-      animation: flap 0.5s ease-in-out infinite alternate;
-    }
-
-    @keyframes flap {
-      0% {
-        transform: rotate(-10deg);
-      }
-      100% {
-        transform: rotate(10deg);
-      }
-    }
-
     /* Different butterfly paths */
     .butterfly:nth-child(1) {
       top: 20%;
       animation-duration: 15s;
       animation-delay: 0s;
-      font-size: 22px;
+      background-image: url('https://media.giphy.com/media/1zSz5MVw4zKg0/giphy.gif');
     }
 
     .butterfly:nth-child(2) {
       top: 40%;
       animation-duration: 18s;
       animation-delay: 2s;
-      font-size: 26px;
+      background-image: url('https://media.giphy.com/media/3o7TKsQ8UQ4l4LhGz6/giphy.gif');
       animation-direction: reverse;
     }
 
@@ -435,14 +423,14 @@
       top: 60%;
       animation-duration: 20s;
       animation-delay: 4s;
-      font-size: 24px;
+      background-image: url('https://media.giphy.com/media/26ufdipQqU2lhNA4g/giphy.gif');
     }
 
     .butterfly:nth-child(4) {
       top: 30%;
       animation-duration: 17s;
       animation-delay: 1s;
-      font-size: 20px;
+      background-image: url('https://media.giphy.com/media/1zSz5MVw4zKg0/giphy.gif');
       animation-direction: reverse;
     }
 
@@ -450,7 +438,7 @@
       top: 50%;
       animation-duration: 22s;
       animation-delay: 3s;
-      font-size: 28px;
+      background-image: url('https://media.giphy.com/media/3o7TKsQ8UQ4l4LhGz6/giphy.gif');
     }
 
     /* Responsive design */
@@ -476,7 +464,8 @@
       }
       
       .butterfly {
-        font-size: 20px;
+        width: 40px;
+        height: 40px;
       }
     }
   </style>
@@ -484,16 +473,16 @@
 
 <body>
   <div class="container">
+    <!-- Butterfly animations -->
+    <div class="butterflies">
+      <div class="butterfly"></div>
+      <div class="butterfly"></div>
+      <div class="butterfly"></div>
+      <div class="butterfly"></div>
+      <div class="butterfly"></div>
+    </div>
+    
     <div class="header">
-      <!-- Butterfly animations -->
-      <div class="butterflies">
-        <div class="butterfly"><i class="fas fa-butterfly"></i></div>
-        <div class="butterfly"><i class="fas fa-butterfly"></i></div>
-        <div class="butterfly"><i class="fas fa-butterfly"></i></div>
-        <div class="butterfly"><i class="fas fa-butterfly"></i></div>
-        <div class="butterfly"><i class="fas fa-butterfly"></i></div>
-      </div>
-      
       <h1><i class="fa-solid fa-rocket"></i> Terabox API v2.0 Premium</h1>
       <div class="api-status"><i class="fa-solid fa-circle-check"></i> API is working, use me</div>
       <p>Everything is running smoothly and faster than ever.</p>
@@ -536,4 +525,4 @@
   </div>
 </body>
 
-  </html>
+</html>
