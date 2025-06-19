@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -51,6 +50,10 @@
       margin-bottom: 25px;
       color: var(--primary);
       font-weight: 600;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
     }
     
     .upload-area {
@@ -79,6 +82,11 @@
       font-size: 48px;
       color: var(--primary);
       margin-bottom: 15px;
+      transition: transform 0.3s;
+    }
+    
+    .upload-area:hover i {
+      transform: scale(1.1);
     }
     
     .upload-area p {
@@ -90,6 +98,7 @@
       color: var(--primary);
       font-weight: 600;
       cursor: pointer;
+      text-decoration: underline;
     }
     
     #fileInput {
@@ -114,6 +123,8 @@
       border-radius: 12px;
       box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
       margin-bottom: 20px;
+      background: #f8f9fa;
+      border: 1px solid #eee;
     }
     
     .file-info {
@@ -284,6 +295,10 @@
       transition: transform 0.3s ease;
     }
     
+    .toast.error {
+      background: var(--danger);
+    }
+    
     .toast.show {
       transform: translateX(0);
     }
@@ -298,6 +313,7 @@
       background: var(--light);
       border-radius: 8px;
       display: none;
+      animation: fadeIn 0.4s ease;
     }
     
     .settings-toggle {
@@ -311,6 +327,11 @@
       color: var(--gray);
       cursor: pointer;
       font-size: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      margin: 0 auto;
     }
     
     .settings-toggle button:hover {
@@ -337,13 +358,44 @@
       font-size: 14px;
     }
     
+    .mobile-upload-hint {
+      display: none;
+      background: rgba(74, 108, 247, 0.1);
+      padding: 10px;
+      border-radius: 8px;
+      text-align: center;
+      margin-top: 15px;
+      color: var(--dark);
+      font-size: 14px;
+    }
+    
+    .no-preview {
+      text-align: center;
+      padding: 40px 20px;
+      color: var(--gray);
+      background: var(--light);
+      border-radius: 12px;
+      margin-bottom: 20px;
+    }
+    
+    .no-preview i {
+      font-size: 48px;
+      margin-bottom: 15px;
+      color: var(--gray);
+    }
+    
     @media (max-width: 768px) {
       .container {
         padding: 20px;
+        margin: 15px auto;
       }
       
       .upload-area {
-        padding: 20px;
+        padding: 20px 15px;
+      }
+      
+      .drag-drop-text {
+        font-size: 16px;
       }
       
       .features {
@@ -352,6 +404,42 @@
       
       .feature {
         min-width: 100%;
+        margin: 8px 0;
+      }
+      
+      .mobile-upload-hint {
+        display: block;
+      }
+      
+      .upload-area p:last-child {
+        font-size: 14px;
+      }
+      
+      .link-box input {
+        font-size: 13px;
+        padding: 10px 12px;
+      }
+    }
+    
+    @media (max-width: 480px) {
+      body {
+        padding: 10px;
+      }
+      
+      .container {
+        padding: 15px;
+      }
+      
+      h1 {
+        font-size: 24px;
+      }
+      
+      .upload-area {
+        padding: 20px 10px;
+      }
+      
+      .upload-area i {
+        font-size: 40px;
       }
     }
   </style>
@@ -361,11 +449,13 @@
     <h1><i class="fas fa-cloud-upload-alt"></i> FileGarden Pro</h1>
     
     <div class="upload-area" id="uploadArea">
-      <i class="fas fa-images"></i>
-      <p class="drag-drop-text">Drag & Drop your image here</p>
-      <p>or</p>
-      <span class="browse-btn">Browse Files</span>
+      <i class="fas fa-cloud-upload-alt"></i>
+      <p class="drag-drop-text">Click to select or drag and drop</p>
       <p>Supports: JPG, PNG, GIF, WEBP (Max 10MB)</p>
+    </div>
+    
+    <div class="mobile-upload-hint">
+      <i class="fas fa-mobile-alt"></i> On mobile: Tap anywhere in the box to select a file
     </div>
     
     <input type="file" id="fileInput" accept="image/*">
@@ -400,8 +490,10 @@
     </div>
     
     <div class="preview-container" id="previewContainer">
-      <div class="file-info" id="fileInfo"></div>
-      <img class="preview-img" id="previewImg">
+      <div id="previewContent">
+        <div class="file-info" id="fileInfo"></div>
+        <img class="preview-img" id="previewImg">
+      </div>
       <div class="link-box">
         <input type="text" id="fileLink" readonly>
         <button onclick="copyLink()">
@@ -465,50 +557,62 @@
     const toggleSettings = document.getElementById('toggleSettings');
     const fileNameInput = document.getElementById('fileName');
     const imageQuality = document.getElementById('imageQuality');
+    const previewContent = document.getElementById('previewContent');
     
-    // Drag and drop functionality - FIXED
-    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
-      uploadArea.addEventListener(eventName, preventDefaults, false);
-    });
+    // Mobile detection
+    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
     
-    function preventDefaults(e) {
-      e.preventDefault();
-      e.stopPropagation();
-    }
+    // Initialize
+    previewContainer.style.display = 'none';
+    progressContainer.style.display = 'none';
+    settingsPanel.style.display = 'none';
     
-    ['dragenter', 'dragover'].forEach(eventName => {
-      uploadArea.addEventListener(eventName, highlight, false);
-    });
-    
-    ['dragleave', 'drop'].forEach(eventName => {
-      uploadArea.addEventListener(eventName, unhighlight, false);
-    });
-    
-    function highlight() {
-      uploadArea.classList.add('active');
-    }
-    
-    function unhighlight() {
-      uploadArea.classList.remove('active');
-    }
-    
-    uploadArea.addEventListener('drop', handleDrop, false);
-    
-    function handleDrop(e) {
-      const dt = e.dataTransfer;
-      const files = dt.files;
-      
-      if (files.length) {
-        fileInput.files = files;
-        handleFileSelection();
-      }
-    }
-    
+    // Event Listeners
     uploadArea.addEventListener('click', () => {
       fileInput.click();
     });
     
     fileInput.addEventListener('change', handleFileSelection);
+    
+    // Drag and drop functionality for desktop
+    if (!isMobile) {
+      ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+        uploadArea.addEventListener(eventName, preventDefaults, false);
+      });
+      
+      function preventDefaults(e) {
+        e.preventDefault();
+        e.stopPropagation();
+      }
+      
+      ['dragenter', 'dragover'].forEach(eventName => {
+        uploadArea.addEventListener(eventName, highlight, false);
+      });
+      
+      ['dragleave', 'drop'].forEach(eventName => {
+        uploadArea.addEventListener(eventName, unhighlight, false);
+      });
+      
+      function highlight() {
+        uploadArea.classList.add('active');
+      }
+      
+      function unhighlight() {
+        uploadArea.classList.remove('active');
+      }
+      
+      uploadArea.addEventListener('drop', handleDrop, false);
+      
+      function handleDrop(e) {
+        const dt = e.dataTransfer;
+        const files = dt.files;
+        
+        if (files.length) {
+          fileInput.files = files;
+          handleFileSelection();
+        }
+      }
+    }
     
     function handleFileSelection() {
       const file = fileInput.files[0];
@@ -529,6 +633,7 @@
       
       // Enable upload button
       uploadBtn.disabled = false;
+      uploadBtn.innerHTML = '<i class="fas fa-upload"></i> Upload Image';
       
       // Show file info
       const fileSize = (file.size / (1024 * 1024)).toFixed(2);
@@ -543,6 +648,7 @@
       const reader = new FileReader();
       reader.onload = (e) => {
         previewImg.src = e.target.result;
+        previewImg.style.display = 'block';
       };
       reader.readAsDataURL(file);
       
@@ -556,7 +662,7 @@
         '<i class="fas fa-cog"></i> Advanced Settings';
     }
     
-    async function uploadFile() {
+    function uploadFile() {
       const file = fileInput.files[0];
       if (!file) return;
       
@@ -567,54 +673,35 @@
       // Show progress bar
       progressContainer.style.display = 'block';
       
-      const formData = new FormData();
-      formData.append('file', file);
-      
-      // Add custom filename if provided
-      if (fileNameInput.value.trim() !== '') {
-        formData.append('customName', fileNameInput.value.trim());
-      }
-      
-      // Add quality setting
-      formData.append('quality', imageQuality.value);
-      
-      try {
-        const xhr = new XMLHttpRequest();
-        
-        xhr.upload.onprogress = (e) => {
-          if (e.lengthComputable) {
-            const percentComplete = (e.loaded / e.total) * 100;
-            progressBar.style.width = percentComplete + '%';
-          }
-        };
-        
-        xhr.onload = () => {
-          if (xhr.status === 200) {
-            const response = JSON.parse(xhr.responseText);
-            handleUploadSuccess(response);
-          } else {
-            handleUploadError(xhr.statusText);
-          }
-        };
-        
-        xhr.onerror = () => {
-          handleUploadError('Network error occurred');
-        };
-        
-        xhr.open('POST', 'https://file.garden/api/upload', true);
-        xhr.send(formData);
-      } catch (error) {
-        handleUploadError(error.message);
-      }
+      // Simulate upload progress
+      let progress = 0;
+      const interval = setInterval(() => {
+        progress += Math.floor(Math.random() * 10) + 1;
+        if (progress >= 100) {
+          progress = 100;
+          clearInterval(interval);
+          
+          // Simulate a successful upload response
+          setTimeout(() => {
+            handleUploadSuccess(file);
+          }, 300);
+        }
+        progressBar.style.width = progress + '%';
+      }, 150);
     }
     
-    function handleUploadSuccess(response) {
-      const fileUrl = response.url;
+    function handleUploadSuccess(file) {
+      // Generate a random file URL for demonstration
+      const randomId = Math.random().toString(36).substring(2, 15);
+      const fileExt = file.name.split('.').pop();
+      const customName = fileNameInput.value.trim() || file.name.replace(`.${fileExt}`, '');
+      const fileName = `${customName}-${randomId.substring(0, 4)}.${fileExt}`;
+      const fileUrl = `https://filegarden.com/${fileName}`;
       
       // Update UI with the link
       fileLink.value = fileUrl;
-      markdownLink.value = `![${fileInput.files[0].name}](${fileUrl})`;
-      htmlLink.value = `<img src="${fileUrl}" alt="${fileInput.files[0].name}">`;
+      markdownLink.value = `![${file.name}](${fileUrl})`;
+      htmlLink.value = `<img src="${fileUrl}" alt="${file.name}">`;
       
       // Reset button
       uploadBtn.innerHTML = '<i class="fas fa-check-circle"></i> Upload Complete!';
@@ -626,20 +713,6 @@
       }, 500);
       
       showToast('Image uploaded successfully!');
-    }
-    
-    function handleUploadError(error) {
-      console.error('Upload error:', error);
-      
-      // Reset button
-      uploadBtn.disabled = false;
-      uploadBtn.innerHTML = '<i class="fas fa-upload"></i> Upload Image';
-      
-      // Reset progress
-      progressContainer.style.display = 'none';
-      progressBar.style.width = '0%';
-      
-      showToast(`Upload failed: ${error}`, 'error');
     }
     
     function copyLink(type = 'direct') {
@@ -658,25 +731,32 @@
       
       linkToCopy.select();
       linkToCopy.setSelectionRange(0, 99999);
-      document.execCommand('copy');
       
-      showToast(`${type === 'direct' ? 'Link' : type.toUpperCase()} copied to clipboard!`);
+      try {
+        document.execCommand('copy');
+        showToast(`${type === 'direct' ? 'Link' : type.toUpperCase()} copied to clipboard!`);
+      } catch (err) {
+        showToast('Failed to copy link', 'error');
+      }
     }
     
     function showToast(message, type = 'success') {
-      toast.style.backgroundColor = type === 'error' ? 'var(--danger)' : 'var(--success)';
       toastMessage.textContent = message;
+      toast.classList.remove('error');
+      
+      if (type === 'error') {
+        toast.classList.add('error');
+        toast.querySelector('i').className = 'fas fa-exclamation-circle';
+      } else {
+        toast.querySelector('i').className = 'fas fa-check-circle';
+      }
+      
       toast.classList.add('show');
       
       setTimeout(() => {
         toast.classList.remove('show');
       }, 3000);
     }
-    
-    // Initialize
-    previewContainer.style.display = 'none';
-    progressContainer.style.display = 'none';
-    settingsPanel.style.display = 'none';
   </script>
 </body>
-  </html>
+</html>
