@@ -716,8 +716,7 @@
         
         <div class="feature-card">
           <h3><i class="fas fa-bolt"></i> Why GoFile?</h3>
-          <ul>
-            <li>Military-grade encryption</li>
+          <ul>           <li>Military-grade encryption</li>
           <li>99.9% uptime guarantee</li>
           <li>Lightning-fast CDN delivery</li>
             <li>24/7 dedicated support</li>
@@ -921,15 +920,9 @@
 
           // Handle response
           if (result && result.status === "ok" && result.data) {
-            // FIX: Extract server and code correctly
-            const server = result.data.server || 'store1';
-            const code = result.data.code || extractCodeFromUrl(result.data.downloadPage);
-            
             uploadResults.push({
               name: file.name,
               viewerLink: result.data.downloadPage,
-              server: server,
-              code: code,
               thumbnail: file.type.startsWith('image/') ? URL.createObjectURL(file) : null,
               icon: getFileIcon(file)
             });
@@ -963,13 +956,6 @@
       uploadBtnText.innerHTML = '<i class="fas fa-upload"></i> Upload to GoFile';
       uploadBtn.disabled = false;
     }
-  }
-
-  // Extract code from viewer URL
-  function extractCodeFromUrl(url) {
-    if (!url) return null;
-    const parts = url.split('/');
-    return parts[parts.length - 1];
   }
 
   // Upload single file
@@ -1063,8 +1049,9 @@
           </div>
         `;
       } else {
-        // Fix direct download link - use correct format
-        const directLink = `https://${result.server}.gofile.io/download/${result.code}/${encodeURIComponent(result.name)}`;
+        // Extract file ID from viewer link
+        const fileId = extractFileId(result.viewerLink);
+        const directLink = `https://store1.gofile.io/download/${fileId}/${encodeURIComponent(result.name)}`;
         
         const combinedText = `File: ${result.name}
 Viewer: ${result.viewerLink}
@@ -1090,6 +1077,18 @@ Direct: ${directLink}`;
     
     // Scroll to results
     resultsDiv.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  // Extract file ID from viewer link
+  function extractFileId(viewerLink) {
+    try {
+      // Example: https://gofile.io/d/zRD4iK
+      const parts = viewerLink.split('/');
+      return parts[parts.length - 1];
+    } catch (e) {
+      console.error('Error extracting file ID:', e);
+      return 'unknown';
+    }
   }
 
   // Copy to clipboard with fallback
